@@ -1,8 +1,8 @@
 from app import app, db, socketio
 from flask import render_template, send_from_directory, url_for, request, redirect, jsonify, flash, current_app, send_file, make_response
 from flask_login import login_user, logout_user, current_user, login_required
-from app.forms import CadastrarSala, CadastroArmario, CadastroFerramenta, EditarInformacoes, EditarInformacoesArmario, EditarInformacoesFerramentas, EditarInformacoesSalas, LoginForm, ScanearForm, UserForm, CadastrarSuporte
-from app.models import User, Salas, Armario, Ferramentas, FerramentasSuporte, Message, Group, GroupUser, GroupMessage
+from app.forms import LoginForm
+from app.models import User
 from datetime import datetime
 from flask_socketio import join_room, leave_room, emit
 from fpdf import FPDF
@@ -40,3 +40,17 @@ def homepage():
 
     # Renderiza a mesma página com o formulário e mensagens flash
     return render_template('index2.html', form=form, usuario=current_user)
+
+@app.context_processor
+def inject_user():
+    return dict(current_user=current_user)
+
+#############################################
+######## PAGE HOMES #########################
+#############################################
+
+# HOMEPAGE
+@app.route('/home/')
+@login_required
+def home():
+    return render_template('homepage2.html')
