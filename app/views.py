@@ -11,6 +11,7 @@ from sqlalchemy import desc
 from werkzeug.utils import secure_filename
 import os
 import base64
+import pandas as pd
 import uuid
 import random
 import barcode
@@ -46,7 +47,7 @@ def inject_user():
     return dict(current_user=current_user)
 
 #############################################
-######## PAGE HOMES #########################
+######## PAGE HOME ##########################
 #############################################
 
 # HOMEPAGE
@@ -54,3 +55,32 @@ def inject_user():
 @login_required
 def home():
     return render_template('homepage2.html')
+
+################################################
+######## PAGE DISTRIBUICAO DE PRODUTOS #########
+################################################
+
+@app.route('/distribuicao/')
+@login_required
+def distribuicao():
+    return render_template('distribuicao.html', tabelaDistribuicao="")  # começa vazio
+
+@app.route('/distribuicao/upload', methods=['POST'])
+@login_required
+def upload_distribuicao():
+    file = request.files.get("file")
+    if not file:
+        return "Nenhum arquivo enviado", 400
+
+    filename = file.filename.lower()
+    if filename.endswith(".csv"):
+        df = pd.read_csv(file, sep=";", encoding="utf-8", engine="python")
+    elif filename.endswith((".xlsx", ".xls")):
+        df = pd.read_excel(file)
+    else:
+        return "Formato de arquivo não suportado", 400
+
+    tabela_html = df.to_html(index=False, classes="csv-table")  # usa a classe da tabela
+    return tabela_html
+
+
