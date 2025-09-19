@@ -206,8 +206,6 @@ def detalhes_produto(df_produtos_unicos):
     df_detalhes.drop_duplicates(subset=['Ref_Cor', 'tamanho'], keep='first', inplace=True)
     return df_detalhes
 
-
-
 def cronograma_envio(df_movimentacoes, prazo_envio, min_envio, data_inicio, max_rotas):
     # --- Parte 1: Agendamento das Rotas (Lógica Alterada) ---
     somas_por_rota = df_movimentacoes.groupby(['de_loja', 'para_loja'])['qtde'].sum().reset_index()

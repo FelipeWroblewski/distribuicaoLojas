@@ -493,12 +493,38 @@
     font-size: 1.5rem;
 }
 
-.modelBodyTransferencias th {
+.trModais {
     background-color: #d5cfc8;
     color: #846c5b;
-    padding: 10px;
+    height: 2rem;
     border: 1px solid #ccc;
+    border-radius: 10px;
 }
+
+.tabelaModais {
+    border-radius: 10px;
+    margin: 0 auto;
+    text-align: center;
+}
+
+.tdModais {
+    background-color: #dcdad9;
+    border: 1px solid #dcdad9;
+    font-size: 1.2rem;
+    font-weight: 100;
+}
+
+/* #modalCronograma {
+    display: flex;
+    justify-content: center; 
+}*/
+
+#modalBodyCronograma table {
+    width: 100%;
+    text-align: center;
+    margin: 0 auto;
+}
+
 </style>
 <body>
     <header class="header-container">
@@ -697,8 +723,16 @@ btnProcessar.addEventListener('click', async () => {
 
         const relatorios = await processRes.json();
 
-        const relWrapper = document.createElement('div');
-        relWrapper.className = 'relatorios-wrapper';
+        let relWrapper = document.querySelector('.relatorios-wrapper');
+        if (!relWrapper) {
+            // só cria se ainda não existir
+            relWrapper = document.createElement('div');
+            relWrapper.className = 'relatorios-wrapper';
+            preview.appendChild(relWrapper);
+        }
+
+        // 🔑 limpa os botões antigos antes de recriar
+        relWrapper.innerHTML = "";
 
         //Modal para relatório Cronograma
         function abrirModalCronograma(conteudo) {
@@ -775,6 +809,11 @@ btnProcessar.addEventListener('click', async () => {
 
         relWrapper.appendChild(btnCronograma);
         relWrapper.appendChild(btnTransferencia);
+
+        if (!document.querySelector('.relatorios-wrapper')) {
+            preview.appendChild(relWrapper);
+        }
+
         //preview.appendChild(relWrapper);
 
         const tabela = document.querySelector('.carregaNovoArquivo + table, .carregaNovoArquivo ~ table');
@@ -877,8 +916,6 @@ if (tabela) {
   preview.appendChild(produtosWrapper);
 }
 
-
-
     // Esconde áreas antigas de upload
     if (uploadArea) uploadArea.style.display = 'none';
     const uploadArea2 = document.getElementById('uploadArea2');
@@ -919,6 +956,7 @@ function mostrarTabela(data, container, titulo="") {
     const headerRow = document.createElement('tr');
     Object.keys(data[0]).forEach(key => {
         const th = document.createElement('th');
+        th.className = "trModais";
         th.textContent = key;
         headerRow.appendChild(th);
     });
@@ -929,6 +967,7 @@ function mostrarTabela(data, container, titulo="") {
         const tr = document.createElement('tr');
         Object.values(row).forEach(value => {
             const td = document.createElement('td');
+            td.className = "tdModais"
             td.textContent = value;
             tr.appendChild(td);
         });
