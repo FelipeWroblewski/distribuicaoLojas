@@ -53,6 +53,12 @@ def homepage():
 def inject_user():
     return dict(current_user=current_user)
 
+#Função de logout
+@app.route('/sair')
+def logout():
+    logout_user()
+    return redirect(url_for('homepage'))
+
 #############################################
 ######## PAGE HOME ##########################
 #############################################
@@ -212,6 +218,12 @@ def cronograma_envio(df_movimentacoes, prazo_envio, min_envio, data_inicio, max_
     
     # Usa a variável min_envio para filtrar as rotas
     rotas_para_agendar = somas_por_rota[somas_por_rota['qtde'] >= min_envio].copy()
+
+    print("Somas por rota:")
+    print(somas_por_rota)
+    print("Rotas que passam no min_envio:")
+    print(rotas_para_agendar)
+
     rotas_para_agendar.sort_values(by=['de_loja', 'qtde'], ascending=[True, False], inplace=True)
     
 
@@ -247,6 +259,10 @@ def cronograma_envio(df_movimentacoes, prazo_envio, min_envio, data_inicio, max_
     produtos_unicos = df_movimentacoes[['Ref_Cor', 'tamanho']].drop_duplicates()
     df_detalhes_produtos = detalhes_produto(produtos_unicos)
     # Junta as movimentações com os detalhes dos produtos
+    
+    print(df_detalhes_produtos.head())
+
+
     df_com_detalhes = pd.merge(
         df_movimentacoes,
         df_detalhes_produtos,
@@ -259,8 +275,9 @@ def cronograma_envio(df_movimentacoes, prazo_envio, min_envio, data_inicio, max_
         df_com_detalhes,
         rotas_para_agendar[['de_loja', 'para_loja', 'prazo']],
         on=['de_loja', 'para_loja'],
-        how='inner' # Mantém apenas as movimentações de rotas que foram agendadas
+        how='left' # Mantém apenas as movimentações de rotas que foram agendadas
     )
+    df_final['prazo'] = df_final['prazo'].fillna(data_inicio)
 
     # --- Parte 3: Formatação Final ---
     df_final.rename(columns={
@@ -387,6 +404,7 @@ if __name__ == '__main__':
     ###########################################
     
     df_cronograma, dados_transferencia = cronograma_envio(df_transformado, prazo_envio, min_itens_envio, data_inicio, max_rotas)
+    print(dados_transferencia)
     dados_transferencia_orion = converter_lojas_para_cnpj(dados_transferencia)
 
     #salvar_arquivo_csv(df_recebido_hub, 'hub_itens_recebidos_lojas.csv')
@@ -478,6 +496,7 @@ def processar():
 @app.route('/exportar_csv')
 def exportar_csv():
     dados_transferencia_orion = RELATORIOS_TEMP.get('dados_transferencia_orion')
+
     if dados_transferencia_orion is None:
         return "Nenhum relatório gerado", 400
 

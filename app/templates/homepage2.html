@@ -1,42 +1,10 @@
-<main>
+    {% extends 'base.html' %}
 
-    <h1 class="main-title">Home</h1>
+    {% block content %}
 
-    <div class="banner">
-        <img src="{{ url_for('static', filename='imgs/bannerHome.png') }}" class="img5" alt="teste">
-    </div>
+    {% include 'navbar.html' %}
 
-    <section class="salas">
-        <ul class="infos">
-            <li>
-                <div class="escritArea2">
-                    <p class="conteudoH">Total de Salas</p>
-                    <p class="conteudoQ">{{qtd_sala}}
-                    </p>
-                </div>
-            </li>
+      <h1 class="text-3xl font-bold text-blue-500">Tailwind funcionando!</h1>
+    <p class="mt-4 text-gray-700">Se você ver isso estilizado, está tudo certo.</p>
 
-            <li>
-                <div class="escritArea2">
-                    <p class="conteudoH">Total de Armários</p>
-                    <p class="conteudoQ">{{qtd_armario}}
-                </div>
-            </li>
-
-            <li>
-                <div class="escritArea2">
-                    <p class="conteudoH">Total de Ferramentas</p>
-                    <p class="conteudoQ">{{qtd_ferramenta}}
-                </div>
-            </li>
-
-            <li>
-                <div class="escritArea2">
-                    <p class="conteudoH">Ferramentas Defeituosas</p>
-                    <p class="conteudoQ">{{qtd_ferramenta_sup}}
-                </div>
-            </li>
-        </ul>
-    </section>
-
-</main>
+    {% endblock %}

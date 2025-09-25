@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<style>
+    * {
+        padding: 0;
+        margin: 0;
+        box-sizing: border-box;
+    }
+    .header-container {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        background: linear-gradient(to right, #b7a696, #846c5b);
+        color: #eeeeee;
+        height: 10vh;
+        flex-direction: row;
+        justify-content: start;
+    }
+
+    .header-container i {
+        font-size: 32px;
+        color: #eeeeee;
+        background-color: #ad9c8b;
+        padding: 0.5rem;
+        border-radius: 5px;
+        margin-left: 2rem;
+    }
+
+    .header-container a {
+        text-decoration: none;
+        color: #eeeeee;
+        /* background-color: rgba(255, 255, 255, 0.145); */
+    }
+
+    .text-content {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .text-content h1 {
+        font-size: 1.5rem;
+        color: #eeeeee;
+    }
+
+    .text-content p {
+        color: #d5cfc8;
+    }
+
+    .logoHeader {
+        width: 4vw;
+        margin-left: 5rem;
+    }
+</style>
+
+<body>
+    <header class="header-container">
+        <a href="{{url_for('home')}}">
+            <img src="{{url_for('static', filename='imgs/logo_live.png')}}" alt="" class="logoHeader">
+        </a>
+
+        <a href="{{url_for('home')}}">
+            <h1>{{ current_user.puxar_nome() }}</h1>
+        </a>
+
+        <a href="{{url_for('logout')}}">
+            <h1>sair</h1>
+        </a>
+    </header>
+</body>
+</html>
