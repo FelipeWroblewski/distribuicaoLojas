@@ -1,10 +1,11 @@
 <!DOCTYPE html>
-<html>
+<html lang="pt-br" class="h-full">
 <head>
-    <title>Meu site</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/output.css') }}">
+    <meta charset="UTF-8">
+    <title>Página DW</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/tailwind.css') }}">
 </head>
-<body>
+<body class="h-full m-0">
     {% block content %}{% endblock %}
 </body>
 </html>
