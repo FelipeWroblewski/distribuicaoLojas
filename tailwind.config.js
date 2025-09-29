@@ -1,15 +1,20 @@
+/** @type {import('tailwindcss').Config} */
 module.exports = {
   content: [
-    "./app/templates/**/*.html",
-    "./app/static/js/**/*.js"
+    "./app/templates/**/*.html",   // todos os HTML do Flask
+    "./app/static/scripts/**/*.js", // scripts do static
+    "./app/static/src/**/*.css"     // se usar @apply em CSS
   ],
   theme: {
     extend: {
-        colors: {
-            begePrincipal: "#b7a696",
-            brancoPrincipal: "#ffffff",
-            brancoCinza: "#eeeeee"
-        }
+      colors: {
+        begePrincipal: "#b7a696",
+        begeForte: "#846c5b",
+        brancoPrincipal: "#ffffff",
+        brancoCinza: "#eeeeee",
+        brancoBorda: "#CECECE",
+        brancoForm: "#EBEBEB",
+      },
     },
   },
   plugins: [],

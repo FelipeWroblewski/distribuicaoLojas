@@ -3,9 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <title>Página DW</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/tailwind.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
 </head>
 <body class="h-full m-0">
     {% block content %}{% endblock %}
 </body>
+<script src="{{ url_for('static', filename='script/navbar.js') }}"></script>
 </html>

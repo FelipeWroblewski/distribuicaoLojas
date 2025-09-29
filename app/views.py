@@ -1,5 +1,5 @@
 from app import app, db, socketio
-from flask import Flask, render_template, send_from_directory, url_for, request, redirect, jsonify, flash, current_app, send_file, make_response
+from flask import Flask, render_template, send_from_directory, url_for, request, redirect, jsonify, flash, current_app, send_file, make_response, send_from_directory
 from flask_login import login_user, logout_user, current_user, login_required
 from app.forms import LoginForm
 from app.models import User
@@ -24,6 +24,10 @@ from barcode.writer import ImageWriter
 
 UPLOAD_FOLDER = os.path.join(os.path.dirname(__file__), 'static', 'uploads')
 
+@app.after_request
+def add_header(response):
+    response.cache_control.no_store = True
+    return response
 
 #############################################
 ######## LOGIN PAGE #########################

@@ -13,20 +13,23 @@
     </div>
 
     <!-- Coluna direita -->
-    <div class="w-3/5 min-h-screen grid place-items-center justify-center">    
+    <div class="w-3/5 min-h-screen grid place-items-center justify-center bg-brancoCinza">    
             
-            <div class="container">
+            <div class="w-80 relative mb-10 bottom-5">
 
-                <form action="" method="POST" class="formulario">
+                <form action="" method="POST" class="w-full">
                     {{form.csrf_token}}
 
-                    {{form.email.label(class="cor",style="margin-bottom: 10px; display:block;")}}
-                    {{form.email(class="form-control", placeholder='Digite seu email')}}
+                    {{form.email.label(class="text-begePrincipal mb-2 block")}}
+                    {{form.email(class="w-full bg-brancoForm p-2 mb-3 border-solid border border-brancoBorda rounded-md focus:outline-none ", placeholder='Digite seu email')}}
 
-                    {{form.senha.label(class="cor",style="margin-bottom: 10px; display:block;")}}
-                    {{form.senha(class="form-control", placeholder='Digite sua senha')}}
+                    {{form.senha.label(class="text-begePrincipal mb-2 block")}}
+                    {{form.senha(class="w-full bg-brancoForm p-2 mb-3 border-solid border border-brancoBorda rounded-md focus:outline-none ", placeholder='Digite sua senha')}}
 
-                    {{form.btnSubmit(class="button")}}
+                    {{form.btnSubmit(class="w-full bg-begePrincipal cursor-pointer text-brancoPrincipal p-2 border-solid border-1 border-transparent rounded-md")}}
                 </form>
             </div>
+    </div>
+
+
 {% endblock %}

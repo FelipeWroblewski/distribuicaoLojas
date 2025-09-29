@@ -22,6 +22,7 @@ bcrypt = Bcrypt(app)
 socketio = SocketIO(app)
 
 
+
 from app.views import homepage
 from app import views
 

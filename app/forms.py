@@ -15,7 +15,7 @@ class LoginForm(FlaskForm):
     def login(self):
         user = User.query.filter_by(email=self.email.data).first()
         if user:
-            if bcrypt.check_password_hash(user.senha, self.senha.data.encode('utf-8')):
+            if (user.senha == self.senha.data):
                     return user
             else:
                     raise Exception('Senha Incorreta!!!')
