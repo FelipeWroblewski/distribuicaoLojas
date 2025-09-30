@@ -14,6 +14,11 @@ module.exports = {
         brancoCinza: "#eeeeee",
         brancoBorda: "#CECECE",
         brancoForm: "#EBEBEB",
+        bgSidebar: "#ad9a8a",
+        cinza: "#ccc",
+      },
+      fontFamily: {
+        inter: ['Inter', 'sans-serif'], // use o nome da fonte que escolheu
       },
     },
   },

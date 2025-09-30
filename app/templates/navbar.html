@@ -1,11 +1,7 @@
-{% extends 'base.html' %}
-
-{% block content %}
-
-    <body class="p-0 m-0 box-border">
+<div class="p-0 m-0 box-border">
         <header class="flex items-center justify-between bg-gradient-to-r from-begePrincipal to-begeForte h-20 w-full flex-row text-brancoCinza">
             <div class="flex items-center gap-4 ml-10">
-                <button class="open-modal" data-modal="modal-1">
+                <button id="toogleSidebar">
                     <i class="fa-solid fa-bars text-4xl cursor-pointer"></i>
                 </button>
                 <a href="{{url_for('home')}}" class="decoration-0">
@@ -14,7 +10,7 @@
             </div>
 
             <div class="flex items-center gap-4 mr-10">
-                <a href="{{url_for('home')}}" class="flex flex-row items-center gap-2 p-1 w-24 justify-center rounded-md bg-begePrincipal">
+                <a href="{{url_for('home')}}" class="flex flex-row items-center gap-2 p-1 w-4/5 justify-center rounded-md bg-begePrincipal">
                     <i class="fa-solid fa-user"></i>
                     <h1>{{ current_user.puxar_nome() }}</h1>
                 </a>
@@ -27,9 +23,85 @@
             
         </header>
 
-        <dialog id="modal-1" class="h-screen w-1/3">
-            <h1>Teste</h1>
-        </dialog>
-        
-    </body>
-{% endblock %}
+        <div id="sidebar" class="fixed top-20 left-0 h-full w-96 bg-gradient-to-r from-begePrincipal to-bgSidebar shadow-lg transform -translate-x-full transition-transform duration-300 ease-in-out">
+            <div class="flex flex-col h-full p-4 relative">
+                <input type="text" placeholder="Buscar..."
+                class="rounded-md border border-solid text-cinza border-cinza pl-10 p-1 focus:outline-none w-4/5 mx-auto bg-brancoCinza">
+                <i class="fa-solid fa-magnifying-glass absolute text-cinza left-16 top-6"></i>
+
+                <div class="ferramentas-menu-wrapper">
+                    <input type="checkbox" id="toogleFerramentas" class="peer hidden">
+                    
+                    <label for="toogleFerramentas" class="flex justify-center items-center cursor-pointer mt-10 gap-20">
+                        <div class="flex items-center gap-2 flex-row">
+                            <i class="fa-solid fa-screwdriver-wrench text-2xl text-brancoPrincipal"></i>
+                            <span class="text-2xl text-brancoPrincipal font-inter">Ferramentas</span>
+                        </div>
+                        <i class="fa-solid fa-caret-right text-2xl text-brancoPrincipal w-4 h-4 transition-transform duration-300 ease-in-out peer-checked:rotate-90"></i>
+                    </label>
+
+                    <div
+                        class="flex flex-col mt-2 space-y-2 px-4 max-h-0 overflow-hidden transition-all duration-300 ease-in-out peer-checked:max-h-56 relative pl-8 
+                                before:content-[''] before:absolute before:left-14 before:w-[2px] before:h-[calc(90%-15px)] before:bg-brancoPrincipal before:rounded-[5px]">
+                        
+                        <ul class="list-none mt-5 p-0">
+                            <li class="ml-11 mb-10 relative font-inter font-light
+                                    before:content-[''] before:absolute before:top-1 before:left-[-20px] before:w-[20px] before:h-[20px] 
+                                    before:border-l-2 before:border-b-2 before:border-brancoPrincipal before:rounded-bl-[10px] before:translate-y-[-50%]">
+                            <a class="ml-5 text-lg text-brancoPrincipal" href="{{url_for('distribuicao')}}">Distribuição Lojas</a>
+                            </li>
+                            <li class="ml-11 mb-10 relative font-inter font-light
+                                    before:content-[''] before:absolute before:top-1 before:left-[-20px] before:w-[20px] before:h-[20px] 
+                                    before:border-l-2 before:border-b-2 before:border-brancoPrincipal before:rounded-bl-[10px] before:translate-y-[-50%]">
+                            <a class="ml-5 text-lg text-brancoPrincipal" href="{{url_for('distribuicao')}}">Distribuição Lojas</a>
+                            </li>
+                            <li class="ml-11 relative font-inter font-light
+                                    before:content-[''] before:absolute before:top-1 before:left-[-20px] before:w-[20px] before:h-[20px] 
+                                    before:border-l-2 before:border-b-2 before:border-brancoPrincipal before:rounded-bl-[10px] before:translate-y-[-50%]">
+                            <a class="ml-5 text-lg text-brancoPrincipal" href="{{url_for('distribuicao')}}">Distribuição Lojas</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <hr class="border-brancoPrincipal border w-5/6 mt-5 mx-auto">
+
+                <div class="dw-menu-wrapper">
+                    <input type="checkbox" id="toogleDW" class="peer hidden">
+
+                    <label for="toogleDW" class="flex justify-center items-center cursor-pointer mt-5 gap-14">
+                        <div class="flex items-center gap-2 flex-row text-2xl ">
+                            <i class="fa-solid fa-chart-line text-2xl text-brancoPrincipal"></i>
+                            <span class="text-2xl text-brancoPrincipal font-inter">Documentação</span>
+                        </div>
+                        <i class="fa-solid fa-caret-right text-2xl text-brancoPrincipal w-4 h-4 transition-transform duration-300 ease-in-out peer-checked:rotate-90"></i>
+                    </label>
+
+                    <div
+                        class="flex flex-col mt-2 space-y-2 px-4 max-h-0 overflow-hidden transition-all duration-300 ease-in-out peer-checked:max-h-56 relative pl-8 
+                                before:content-[''] before:absolute before:left-14 before:w-[2px] before:h-[calc(90%-37px)] before:bg-brancoPrincipal before:rounded-[5px]">
+                        
+                        <ul class="list-none mt-5 p-0">
+                            <li class="ml-11 mb-10 relative font-inter font-light
+                                    before:content-[''] before:absolute before:top-1 before:left-[-20px] before:w-[20px] before:h-[20px] 
+                                    before:border-l-2 before:border-b-2 before:border-brancoPrincipal before:rounded-bl-[10px] before:translate-y-[-50%]">
+                            <a class="ml-5 text-lg text-brancoPrincipal" href="{{url_for('distribuicao')}}">Cadastro de Centro de Custo</a>
+                            </li>
+                            <li class="ml-11 mb-10 relative font-inter font-light
+                                    before:content-[''] before:absolute before:top-1 before:left-[-20px] before:w-[20px] before:h-[20px] 
+                                    before:border-l-2 before:border-b-2 before:border-brancoPrincipal before:rounded-bl-[10px] before:translate-y-[-50%]">
+                            <a class="ml-5 text-lg text-brancoPrincipal" href="{{url_for('distribuicao')}}">Cadastro de Centro de Custo</a>
+                            </li>
+                            <li class="ml-11 mb-10 relative font-inter font-light
+                                    before:content-[''] before:absolute before:top-1 before:left-[-20px] before:w-[20px] before:h-[20px] 
+                                    before:border-l-2 before:border-b-2 before:border-brancoPrincipal before:rounded-bl-[10px] before:translate-y-[-50%]">
+                            <a class="ml-5 text-lg text-brancoPrincipal" href="{{url_for('distribuicao')}}">Cadastro de Centro de Custo</a>
+                            </li>
+                        </ul>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+    </div>
