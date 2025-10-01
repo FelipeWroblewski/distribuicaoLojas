@@ -73,6 +73,16 @@ def logout():
 def home():
     return render_template('homepage2.html')
 
+#############################################
+######## PAGE ESTOQUE PRODUTOS ##############
+#############################################
+
+# HOMEPAGE
+@app.route('/estqProdutos/')
+@login_required
+def estqProdutos():
+    return render_template('estoqueProdutos.html')
+
 ################################################
 ######## PAGE DISTRIBUICAO DE PRODUTOS #########
 ################################################
