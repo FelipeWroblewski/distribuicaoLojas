@@ -23,7 +23,7 @@
             
         </header>
 
-        <div id="sidebar" class="fixed top-20 left-0 h-full w-96 bg-gradient-to-r from-begePrincipal to-bgSidebar shadow-lg transform -translate-x-full transition-transform duration-300 ease-in-out">
+        <div id="sidebar" class="fixed top-20 left-0 h-full w-80 bg-gradient-to-r from-begePrincipal to-bgSidebar shadow-lg transform -translate-x-full transition-transform duration-300 ease-in-out">
             <div class="flex flex-col h-full p-4 relative">
                 <input type="text" placeholder="Buscar..."
                 class="rounded-md border border-solid text-cinza border-cinza pl-10 p-1 focus:outline-none w-4/5 mx-auto bg-brancoCinza">
@@ -41,21 +41,21 @@
                     </label>
 
                     <div
-                        class="flex flex-col mt-2 space-y-2 px-4 max-h-0 overflow-hidden transition-all duration-300 ease-in-out peer-checked:max-h-56 relative pl-8 
-                                before:content-[''] before:absolute before:left-14 before:w-[2px] before:h-[calc(90%-15px)] before:bg-brancoPrincipal before:rounded-[5px]">
+                        class="flex flex-col mt-2 space-y-2 px-4 max-h-0 overflow-hidden transition-all duration-300 ease-in-out peer-checked:max-h-56 relative pl-5 
+                                before:content-[''] before:absolute before:left-5 before:w-[2px] before:h-[calc(90%-15px)] before:bg-brancoPrincipal before:rounded-[5px]">
                         
                         <ul class="list-none mt-5 p-0">
-                            <li class="ml-11 mb-10 relative font-inter font-light
+                            <li class="ml-5 mb-10 relative font-inter font-light
                                     before:content-[''] before:absolute before:top-1 before:left-[-20px] before:w-[20px] before:h-[20px] 
                                     before:border-l-2 before:border-b-2 before:border-brancoPrincipal before:rounded-bl-[10px] before:translate-y-[-50%]">
                             <a class="ml-5 text-lg text-brancoPrincipal" href="{{url_for('distribuicao')}}">Distribuição Lojas</a>
                             </li>
-                            <li class="ml-11 mb-10 relative font-inter font-light
+                            <li class="ml-5 mb-10 relative font-inter font-light
                                     before:content-[''] before:absolute before:top-1 before:left-[-20px] before:w-[20px] before:h-[20px] 
                                     before:border-l-2 before:border-b-2 before:border-brancoPrincipal before:rounded-bl-[10px] before:translate-y-[-50%]">
                             <a class="ml-5 text-lg text-brancoPrincipal" href="{{url_for('distribuicao')}}">Distribuição Lojas</a>
                             </li>
-                            <li class="ml-11 relative font-inter font-light
+                            <li class="ml-5 relative font-inter font-light
                                     before:content-[''] before:absolute before:top-1 before:left-[-20px] before:w-[20px] before:h-[20px] 
                                     before:border-l-2 before:border-b-2 before:border-brancoPrincipal before:rounded-bl-[10px] before:translate-y-[-50%]">
                             <a class="ml-5 text-lg text-brancoPrincipal" href="{{url_for('distribuicao')}}">Distribuição Lojas</a>
@@ -67,6 +67,7 @@
                 <hr class="border-brancoPrincipal border w-5/6 mt-5 mx-auto">
 
                 <div class="dw-menu-wrapper">
+
                     <input type="checkbox" id="toogleDW" class="peer hidden">
 
                     <label for="toogleDW" class="flex justify-center items-center cursor-pointer mt-5 gap-14">
@@ -78,24 +79,24 @@
                     </label>
 
                     <div
-                        class="flex flex-col mt-2 space-y-2 px-4 max-h-0 overflow-hidden transition-all duration-300 ease-in-out peer-checked:max-h-56 relative pl-8 
-                                before:content-[''] before:absolute before:left-14 before:w-[2px] before:h-[calc(90%-37px)] before:bg-brancoPrincipal before:rounded-[5px]">
+                        class="flex flex-col mt-2 space-y-2 px-4 max-h-0 overflow-hidden transition-all duration-300 ease-in-out peer-checked:max-h-screen relative pl-5 
+                        before:content-[''] before:absolute before:left-5 before:w-[2px] before:h-48 before:bg-brancoPrincipal before:rounded-[5px]">
                         
                         <ul class="list-none mt-5 p-0">
-                            <li class="ml-11 mb-10 relative font-inter font-light
+                            <li class="ml-5 mb-10 relative font-inter font-light
                                     before:content-[''] before:absolute before:top-1 before:left-[-20px] before:w-[20px] before:h-[20px] 
                                     before:border-l-2 before:border-b-2 before:border-brancoPrincipal before:rounded-bl-[10px] before:translate-y-[-50%]">
-                            <a class="ml-5 text-lg text-brancoPrincipal" href="{{url_for('distribuicao')}}">Cadastro de Centro de Custo</a>
+                            <a class="pl-5 text-lg text-brancoPrincipal" href="{{url_for('distribuicao')}}">Cadastro de Centro</a>
                             </li>
-                            <li class="ml-11 mb-10 relative font-inter font-light
+                            <li class="ml-5 mb-10 relative font-inter font-light
                                     before:content-[''] before:absolute before:top-1 before:left-[-20px] before:w-[20px] before:h-[20px] 
                                     before:border-l-2 before:border-b-2 before:border-brancoPrincipal before:rounded-bl-[10px] before:translate-y-[-50%]">
-                            <a class="ml-5 text-lg text-brancoPrincipal" href="{{url_for('distribuicao')}}">Cadastro de Centro de Custo</a>
+                            <a class="pl-5 text-lg text-brancoPrincipal" href="{{url_for('distribuicao')}}">Cadastro de Centro de Custo</a>
                             </li>
-                            <li class="ml-11 mb-10 relative font-inter font-light
+                            <li class="ml-5 mb-10 relative font-inter font-light
                                     before:content-[''] before:absolute before:top-1 before:left-[-20px] before:w-[20px] before:h-[20px] 
                                     before:border-l-2 before:border-b-2 before:border-brancoPrincipal before:rounded-bl-[10px] before:translate-y-[-50%]">
-                            <a class="ml-5 text-lg text-brancoPrincipal" href="{{url_for('distribuicao')}}">Cadastro de Centro de Custo</a>
+                            <a class=" text-lg text-brancoPrincipal" href="{{url_for('distribuicao')}}">Cadastro de Centro de Custo</a>
                             </li>
                         </ul>
                     </div>

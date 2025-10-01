@@ -604,11 +604,6 @@ video {
   position: relative;
 }
 
-.inset-y-0 {
-  top: 0px;
-  bottom: 0px;
-}
-
 .bottom-5 {
   bottom: 1.25rem;
 }
@@ -637,23 +632,9 @@ video {
   margin: 2.5rem;
 }
 
-.m-auto {
-  margin: auto;
-}
-
 .mx-auto {
   margin-left: auto;
   margin-right: auto;
-}
-
-.my-auto {
-  margin-top: auto;
-  margin-bottom: auto;
-}
-
-.my-0 {
-  margin-top: 0px;
-  margin-bottom: 0px;
 }
 
 .mb-10 {
@@ -672,14 +653,6 @@ video {
   margin-left: 2.5rem;
 }
 
-.ml-11 {
-  margin-left: 2.75rem;
-}
-
-.ml-14 {
-  margin-left: 3.5rem;
-}
-
 .ml-5 {
   margin-left: 1.25rem;
 }
@@ -696,16 +669,8 @@ video {
   margin-top: 0.5rem;
 }
 
-.mt-3 {
-  margin-top: 0.75rem;
-}
-
 .mt-5 {
   margin-top: 1.25rem;
-}
-
-.ml-64 {
-  margin-left: 16rem;
 }
 
 .box-border {
@@ -788,6 +753,10 @@ video {
   width: 83.333333%;
 }
 
+.w-6\/12 {
+  width: 50%;
+}
+
 .w-60 {
   width: 15rem;
 }
@@ -796,36 +765,8 @@ video {
   width: 20rem;
 }
 
-.w-96 {
-  width: 24rem;
-}
-
 .w-full {
   width: 100%;
-}
-
-.w-11\/12 {
-  width: 91.666667%;
-}
-
-.w-8 {
-  width: 2rem;
-}
-
-.w-8\/12 {
-  width: 66.666667%;
-}
-
-.w-6\/12 {
-  width: 50%;
-}
-
-.w-64 {
-  width: 16rem;
-}
-
-.flex-1 {
-  flex: 1 1 0%;
 }
 
 .-translate-x-full {
@@ -949,16 +890,6 @@ video {
   background-color: rgb(235 235 235 / var(--tw-bg-opacity, 1));
 }
 
-.bg-black {
-  --tw-bg-opacity: 1;
-  background-color: rgb(0 0 0 / var(--tw-bg-opacity, 1));
-}
-
-.bg-gray-100 {
-  --tw-bg-opacity: 1;
-  background-color: rgb(243 244 246 / var(--tw-bg-opacity, 1));
-}
-
 .bg-gradient-to-r {
   background-image: linear-gradient(to right, var(--tw-gradient-stops));
 }
@@ -993,10 +924,6 @@ video {
   padding: 1rem;
 }
 
-.p-6 {
-  padding: 1.5rem;
-}
-
 .px-4 {
   padding-left: 1rem;
   padding-right: 1rem;
@@ -1006,16 +933,40 @@ video {
   padding-left: 2.5rem;
 }
 
-.pl-8 {
-  padding-left: 2rem;
+.pl-7 {
+  padding-left: 1.75rem;
 }
 
 .pt-40 {
   padding-top: 10rem;
 }
 
+.pl-5 {
+  padding-left: 1.25rem;
+}
+
+.pl-4 {
+  padding-left: 1rem;
+}
+
+.pl-3 {
+  padding-left: 0.75rem;
+}
+
+.pl-1 {
+  padding-left: 0.25rem;
+}
+
+.pl-6 {
+  padding-left: 1.5rem;
+}
+
 .text-center {
   text-align: center;
+}
+
+.text-start {
+  text-align: start;
 }
 
 .font-inter {
@@ -1053,14 +1004,6 @@ video {
 
 .font-light {
   font-weight: 300;
-}
-
-.font-extralight {
-  font-weight: 200;
-}
-
-.font-thin {
-  font-weight: 100;
 }
 
 .text-begePrincipal {
@@ -1122,9 +1065,9 @@ video {
   position: absolute;
 }
 
-.before\:left-14::before {
+.before\:left-7::before {
   content: var(--tw-content);
-  left: 3.5rem;
+  left: 1.75rem;
 }
 
 .before\:left-\[-20px\]::before {
@@ -1137,24 +1080,14 @@ video {
   top: 0.25rem;
 }
 
+.before\:left-5::before {
+  content: var(--tw-content);
+  left: 1.25rem;
+}
+
 .before\:h-\[20px\]::before {
   content: var(--tw-content);
   height: 20px;
-}
-
-.before\:h-\[calc\(90\%-27px\)\]::before {
-  content: var(--tw-content);
-  height: calc(90% - 27px);
-}
-
-.before\:h-\[calc\(90\%-20px\)\]::before {
-  content: var(--tw-content);
-  height: calc(90% - 20px);
-}
-
-.before\:h-\[calc\(90\%-25px\)\]::before {
-  content: var(--tw-content);
-  height: calc(90% - 25px);
 }
 
 .before\:h-\[calc\(90\%-15px\)\]::before {
@@ -1162,19 +1095,29 @@ video {
   height: calc(90% - 15px);
 }
 
-.before\:h-\[calc\(90\%-30px\)\]::before {
+.before\:h-full::before {
   content: var(--tw-content);
-  height: calc(90% - 30px);
+  height: 100%;
 }
 
-.before\:h-\[calc\(90\%-35px\)\]::before {
+.before\:h-56::before {
   content: var(--tw-content);
-  height: calc(90% - 35px);
+  height: 14rem;
 }
 
-.before\:h-\[calc\(90\%-37px\)\]::before {
+.before\:h-5::before {
   content: var(--tw-content);
-  height: calc(90% - 37px);
+  height: 1.25rem;
+}
+
+.before\:h-52::before {
+  content: var(--tw-content);
+  height: 13rem;
+}
+
+.before\:h-48::before {
+  content: var(--tw-content);
+  height: 12rem;
 }
 
 .before\:w-\[20px\]::before {
@@ -1235,20 +1178,20 @@ video {
   outline-offset: 2px;
 }
 
-.peer:checked ~ .peer-checked\:max-h-40 {
-  max-height: 10rem;
-}
-
 .peer:checked ~ .peer-checked\:max-h-56 {
   max-height: 14rem;
 }
 
-.peer:checked ~ .peer-checked\:max-h-60 {
-  max-height: 15rem;
+.peer:checked ~ .peer-checked\:max-h-\[1000px\] {
+  max-height: 1000px;
 }
 
-.peer:checked ~ .peer-checked\:max-h-72 {
-  max-height: 18rem;
+.peer:checked ~ .peer-checked\:max-h-screen {
+  max-height: 100vh;
+}
+
+.peer:checked ~ .peer-checked\:max-h-60 {
+  max-height: 15rem;
 }
 
 .peer:checked ~ .peer-checked\:rotate-90 {
