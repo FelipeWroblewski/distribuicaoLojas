@@ -1,0 +1,25 @@
+<form method="POST">
+    {{ form.hidden_tag() }}
+
+    {{ form.nome_tabela.label }} {{ form.nome_tabela() }}
+    {{ form.descricao_tabela.label }} {{ form.descricao_tabela() }}
+    {{ form.esquema.label }} {{ form.esquema() }}
+
+    <h3>DAG</h3>
+    {{ form.dag.dag.label }} {{ form.dag.dag() }}
+    {{ form.dag.schedule.label }} {{ form.dag.schedule() }}
+
+    <h3>Origem</h3>
+    {{ form.origem.sistema_origem.label }} {{ form.origem.sistema_origem() }}
+    {{ form.origem.tabela_origem.label }} {{ form.origem.tabela_origem() }}
+
+    <h3>Colunas</h3>
+    <div id="colunas-container">
+        {% for coluna in form.colunas %}
+            {{ coluna.nome_coluna.label }} {{ coluna.nome_coluna() }}
+            {{ coluna.tipo_dado.label }} {{ coluna.tipo_dado() }}
+        {% endfor %}
+    </div>
+
+    <button type="submit">Salvar</button>
+</form>

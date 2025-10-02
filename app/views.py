@@ -1,8 +1,8 @@
 from app import app, db, socketio
 from flask import Flask, render_template, send_from_directory, url_for, request, redirect, jsonify, flash, current_app, send_file, make_response, send_from_directory
 from flask_login import login_user, logout_user, current_user, login_required
-from app.forms import LoginForm
-from app.models import User
+from app.forms import LoginForm, TabelaForm, OrigemForm, ColunasForm, DagForm
+from app.models import User, Tabela, Dag, Colunas, Origem
 from datetime import datetime
 from flask_socketio import join_room, leave_room, emit
 from fpdf import FPDF
@@ -74,14 +74,124 @@ def home():
     return render_template('homepage2.html')
 
 #############################################
-######## PAGE ESTOQUE PRODUTOS ##############
+######## PAGE ESQUEMA API ###############
 #############################################
 
-# HOMEPAGE
-@app.route('/estqProdutos/')
+# ESTOQUE DE PRODUTOS
+@app.route('/esquemaApi/')
 @login_required
-def estqProdutos():
-    return render_template('estoqueProdutos.html')
+def esquemaApi():
+    return render_template('Esquemas/esquemaApi.html')
+
+#############################################
+######## PAGE ESQUEMA COMERCIAL ###############
+#############################################
+
+# ESTOQUE DE PRODUTOS
+@app.route('/esquemaComercial/')
+@login_required
+def esquemaComercial():
+    return render_template('Esquemas/esquemaComercial.html')
+
+#############################################
+######## PAGE ESQUEMA ESTOQUE ###############
+#############################################
+
+# ESTOQUE DE PRODUTOS
+@app.route('/esquemaEstoque/')
+@login_required
+def esquemaEstoque():
+    return render_template('Esquemas/esquemaEstoque.html')
+
+#############################################
+######## PAGE ESQUEMA EVENTOS ###############
+#############################################
+
+# ESTOQUE DE PRODUTOS
+@app.route('/esquemaEventos/')
+@login_required
+def esquemaEventos():
+    return render_template('Esquemas/esquemaEventos.html')
+
+#############################################
+######## PAGE ESQUEMA LIVE ###############
+#############################################
+
+# ESTOQUE DE PRODUTOS
+@app.route('/esquemaLive/')
+@login_required
+def esquemaLive():
+    return render_template('Esquemas/esquemaLive.html')
+
+#############################################
+######## PAGE ESQUEMA MARFT ###############
+#############################################
+
+# ESTOQUE DE PRODUTOS
+@app.route('/esquemaMarft/')
+@login_required
+def esquemaMarft():
+    return render_template('Esquemas/esquemaMarft.html')
+
+#############################################
+######## PAGE ESQUEMA PPCP ###############
+#############################################
+
+# ESTOQUE DE PRODUTOS
+@app.route('/esquemaPpcp/')
+@login_required
+def esquemaPpcp():
+    return render_template('Esquemas/esquemaPpcp.html')
+
+#############################################
+######## PAGE ESQUEMA RH ###############
+#############################################
+
+# ESTOQUE DE PRODUTOS
+@app.route('/esquemaRh/')
+@login_required
+def esquemaRh():
+    return render_template('Esquemas/esquemaRh.html')
+
+#############################################
+######## PAGE ESQUEMA RH_SCI ###############
+#############################################
+
+# ESTOQUE DE PRODUTOS
+@app.route('/esquemaRh_sci/')
+@login_required
+def esquemaRh_sci():
+    return render_template('Esquemas/esquemaRh_sci.html')
+
+#############################################
+######## PAGE ESQUEMA SUPRIMENTOS ###############
+#############################################
+
+# ESTOQUE DE PRODUTOS
+@app.route('/esquemaSuprimentos/')
+@login_required
+def esquemaSuprimentos():
+    return render_template('Esquemas/esquemaSuprimentos.html')
+
+#############################################
+######## PAGE ESQUEMA SUSTENTABILIDADE ###############
+#############################################
+
+# ESTOQUE DE PRODUTOS
+@app.route('/esquemaSustentabilidade/')
+@login_required
+def esquemaSustentabilidade():
+    return render_template('Esquemas/esquemaSustentabilidade.html')
+
+#############################################
+######## PAGE ESQUEMA TI ###############
+#############################################
+
+# ESTOQUE DE PRODUTOS
+@app.route('/esquemaTi/')
+@login_required
+def esquemaTi():
+    return render_template('Esquemas/esquemaTi.html')
 
 ################################################
 ######## PAGE DISTRIBUICAO DE PRODUTOS #########
@@ -91,6 +201,19 @@ def estqProdutos():
 @login_required
 def distribuicao():
     return render_template('distribuicao.html', tabelaDistribuicao="")  # começa vazio
+
+################################################
+#### FUNÇÃO PARA SEPARAR AS TABELAS DO FORM ####
+################################################
+@app.route('/processarTabela', methods=['GET', 'POST'])
+@login_required
+def processarTabela():
+    form = TabelaForm()
+
+    
+
+    return render_template('formTabela.html', form=form)
+    
 
 ################################################
 ######## FUNÇÃO PARA PUXAR ARQUIVO CSV##########
