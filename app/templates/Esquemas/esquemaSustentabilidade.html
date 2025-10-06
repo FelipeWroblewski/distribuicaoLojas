@@ -25,52 +25,16 @@
                     </thead>
 
                     <tbody class="bg-white divide-y divide-gray-200">
-                        
-                        <tr>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                                <a href="">frolos_estoq</a>
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Contagem de rolos em estoque</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">0 3 * * * </td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">ERP</td>
-                        </tr>
-
-                        <tr>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                                <a href="">frolos_estoq_cong</a>
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Contagem de rolos em estoque</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">0 3 * * * </td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">ERP</td>
-                        </tr>
-
-                        <tr>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                                <a href="">fsaldoestoqueatual</a>
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Contagem de rolos em estoque</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">0 3 * * * </td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">ERP</td>
-                        </tr>
-
-                        <tr>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                                <a href="">fsaldoestoqueatual_cong</a>
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Contagem de rolos em estoque</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">0 3 * * * </td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">ERP</td>
-                        </tr>
-
-                        <tr class="bg-gray-50">
-                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                                <a href="">ftecidos_estoque</a>
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Contagem de rolos em estoque</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">0 3 * * * </td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">ERP</td>
-                    </tr>
-
+                        {% for tabela in tabelas %}
+                            <tr>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                                    <a href="">{{ tabela.nome_tabela }}</a>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ tabela.descricao_tabela }}</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ tabela.dag.schedule }}</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ tabela.origem.sistema_origem }}</td>
+                            </tr>
+                        {% endfor %}
                     </tbody>
                 </table>
             </div>
@@ -78,5 +42,6 @@
     </div>
 
 </div>
+
 
 {% endblock %}

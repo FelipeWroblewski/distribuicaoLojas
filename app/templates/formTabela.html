@@ -44,6 +44,10 @@
                             {{ coluna.tipo_dado.label (class="font-inter mt-5") }} {{ coluna.tipo_dado(class="flex w-full rounded-lg border border-gray-300 bg-transparent p-1 text-sm placeholder:text-gray-400  mt-1")  }} 
                             </div>
                         {% endfor %}
+
+                        <button type="button" id="adicionar-coluna" class="bg-blue-600">
+                            + Adicionar Nova Coluna
+                        </button>
                     </div>
 
                 {{form.btnSubmit(class="bg-green-500 mt-5 w-28 mx-auto p-2 rounded-lg cursor-pointer")}}
@@ -51,5 +55,21 @@
         </div>
     </div>
     
+    <template id="coluna-template">
+        <div class="coluna-entry" data-index="__ID__">
+            <div class="font-inter ml-10 mt-5">
+                <label for="colunas-__ID__-nome_coluna" class="font-inter">Nome Coluna</label>
+                <input id="colunas-__ID__-nome_coluna" name="colunas-__ID__-nome_coluna" type="text" class="flex w-full rounded-lg border border-gray-300 bg-transparent p-1 text-sm placeholder:text-gray-400 mt-1">
+            </div>
+            <div class="font-inter mr-10 mt-5">
+                <label for="colunas-__ID__-tipo_dado" class="font-inter mt-5">Tipo de Dado</label>
+                <select id="colunas-__ID__-tipo_dado" name="colunas-__ID__-tipo_dado" class="flex w-full rounded-lg border border-gray-300 bg-transparent p-1 text-sm placeholder:text-gray-400 mt-1">
+                    <option value="string">STRING</option>
+                    <option value="integer">INTEGER</option>
+                    <option value="date">DATE</option>
+                    </select>
+            </div>
+        </div>
+    </template>
 {% endblock %}
 

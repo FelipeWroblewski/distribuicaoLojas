@@ -1,0 +1,26 @@
+# ------------------
+# Python / Flask
+# ------------------
+# Ambientes Virtuais (vão variar o nome dependendo de como você criou)
+venv/
+.venv/
+
+# Arquivos de bytecode e cache
+__pycache__/
+*.pyc
+*.pyd
+*.pyo
+
+# Arquivos de Log e Debug
+*.log
+*.sqlite
+*.db
+instance/
+
+# Arquivos de Configuração Local/Secreta
+# Nunca commit credenciais ou chaves secretas!
+.env
+.flaskenv
+
+# Arquivos do Editor (opcional, dependendo do seu editor)
+.vscode/

@@ -6,7 +6,7 @@ from app.models import User, Tabela, Dag, Colunas, Origem
 from datetime import datetime
 from flask_socketio import join_room, leave_room, emit
 from fpdf import FPDF
-
+from sqlalchemy.orm import joinedload
 from sqlalchemy import desc
 from werkzeug.utils import secure_filename
 import os
@@ -81,7 +81,7 @@ def home():
 @app.route('/esquemaApi/')
 @login_required
 def esquemaApi():
-    return render_template('Esquemas/esquemaApi.html')
+    return render_template('Esquemas/esquemaApi.html', tabelas=Tabela.query.options())
 
 #############################################
 ######## PAGE ESQUEMA COMERCIAL ###############
@@ -209,9 +209,9 @@ def distribuicao():
 @login_required
 def processarTabela():
     form = TabelaForm()
-    print(">>> Formulário recebido:")
+
     if form.validate_on_submit():
-        print(">>> Formulário validado! (NÃO ESTÁ CHEGANDO AQUI)")
+        
         try: # << ADICIONE O BLOCO TRY
             # Criar DAG e Origem
             dag = Dag(
@@ -257,7 +257,7 @@ def processarTabela():
             print(f">>> ERRO ao salvar no banco: {e}")
             flash(f"Ocorreu um erro ao criar a tabela. Detalhes: {e}", "danger")
             # Voltar ao formulário com os dados
-            return render_template('formTabela.html', form=form)
+            return render_template('formTabela.html', form=form, tabelas=tabelas)
     else:
         # Este loop irá iterar sobre os erros de todos os campos
         for field, errors in form.errors.items():
@@ -266,7 +266,17 @@ def processarTabela():
             for error in errors:
                 print(f"   -> Erro: {error}")
 
-    return render_template('formTabela.html', form=form)
+    try:
+        tabelas = Tabela.query.options(
+            joinedload(Tabela.dag),
+            joinedload(Tabela.origem)
+        ).all()
+    except Exception as e:
+        print(f">>> ERRO ao buscar tabelas: {e}")
+        tabelas = []
+
+
+    return render_template('formTabela.html', form=form, tabelas=tabelas)
 
     
 
