@@ -209,10 +209,65 @@ def distribuicao():
 @login_required
 def processarTabela():
     form = TabelaForm()
+    print(">>> Formulário recebido:")
+    if form.validate_on_submit():
+        print(">>> Formulário validado! (NÃO ESTÁ CHEGANDO AQUI)")
+        try: # << ADICIONE O BLOCO TRY
+            # Criar DAG e Origem
+            dag = Dag(
+                dag=form.dag.dag.data,
+                schedule=form.dag.schedule.data
+            )
+            origem = Origem(
+                sistema_origem=form.origem.sistema_origem.data,
+                tabela_origem=form.origem.tabela_origem.data
+            )
 
-    
+            db.session.add(dag)
+            db.session.add(origem)
+            db.session.flush()  # gera IDs
+
+            # Criar Tabela
+            tabela = Tabela(
+                nome_tabela=form.nome_tabela.data,
+                descricao_tabela=form.descricao_tabela.data,
+                esquema=form.esquema.data,
+                dag=dag, # Estes objetos já estão na sessão (flush)
+                origem=origem # Eles serão referenciados corretamente
+            )
+            db.session.add(tabela)
+            db.session.flush() # Para gerar o ID da Tabela antes de usar nas Colunas
+
+            # Criar colunas da tabela (FieldList)
+            for coluna_form in form.colunas.entries:
+                coluna = Colunas(
+                    nome_coluna=coluna_form.form.nome_coluna.data,
+                    tipo_dado=coluna_form.form.tipo_dado.data,
+                    tabela=tabela # Objeto Tabela que agora tem um ID
+                )
+                db.session.add(coluna)
+
+            db.session.commit() # << VERIFIQUE SE ESTE PONTO É ALCANÇADO
+
+            flash("Tabela criada com sucesso!", "success")
+            return redirect(url_for('processarTabela'))
+            
+        except Exception as e: # << ADICIONE O TRATAMENTO DE ERROS
+            db.session.rollback() # É CRUCIAL FAZER O ROLLBACK EM CASO DE ERRO
+            print(f">>> ERRO ao salvar no banco: {e}")
+            flash(f"Ocorreu um erro ao criar a tabela. Detalhes: {e}", "danger")
+            # Voltar ao formulário com os dados
+            return render_template('formTabela.html', form=form)
+    else:
+        # Este loop irá iterar sobre os erros de todos os campos
+        for field, errors in form.errors.items():
+            # ATENÇÃO: Os campos FormField e FieldList podem ter erros aninhados
+            print(f"Campo principal: '{field}'")
+            for error in errors:
+                print(f"   -> Erro: {error}")
 
     return render_template('formTabela.html', form=form)
+
     
 
 ################################################

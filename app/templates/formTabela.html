@@ -1,25 +1,55 @@
-<form method="POST">
-    {{ form.hidden_tag() }}
+{% extends 'base.html' %}
 
-    {{ form.nome_tabela.label }} {{ form.nome_tabela() }}
-    {{ form.descricao_tabela.label }} {{ form.descricao_tabela() }}
-    {{ form.esquema.label }} {{ form.esquema() }}
+{% block content %}
 
-    <h3>DAG</h3>
-    {{ form.dag.dag.label }} {{ form.dag.dag() }}
-    {{ form.dag.schedule.label }} {{ form.dag.schedule() }}
+{% include 'navbar.html' %}
+    <div class="h-screen w-full bg-brancoCinza flex justify-center">  
+        <div class=" bg-white p-6 max-h-fit rounded-lg shadow-lg w-2/4 mt-10">
 
-    <h3>Origem</h3>
-    {{ form.origem.sistema_origem.label }} {{ form.origem.sistema_origem() }}
-    {{ form.origem.tabela_origem.label }} {{ form.origem.tabela_origem() }}
+            <h1 class="font-inter text-center text-2xl m-5">Formulário para cadastro de Tabelas</h1>
 
-    <h3>Colunas</h3>
-    <div id="colunas-container">
-        {% for coluna in form.colunas %}
-            {{ coluna.nome_coluna.label }} {{ coluna.nome_coluna() }}
-            {{ coluna.tipo_dado.label }} {{ coluna.tipo_dado() }}
-        {% endfor %}
+            <form class="flex flex-col justify-between" method="POST">
+                {{ form.csrf_token }}
+                    <div class="grid grid-cols-2 gap-4">
+
+                        <div class="font-inter ml-10">
+                            {{ form.nome_tabela.label (class="font-inter w-4/12") }}
+                            {{ form.nome_tabela(class="flex w-full rounded-lg border border-gray-300 bg-transparent p-1  placeholder:text-gray-400  mt-1") }}
+                        </div>
+
+                        <div class="font-inter mr-10">
+                            {{ form.esquema.label (class="font-inter w-4/12") }}
+                            {{ form.esquema(class="flex w-full rounded-lg border border-gray-300 bg-transparent p-1  placeholder:text-gray-400  mt-1")  }}
+                        </div>
+                        
+                    </div>
+                    
+                    {{ form.descricao_tabela.label (class="ml-10 mt-5 font-inter") }} {{ form.descricao_tabela(class="border border-gray-300 bg-transparent w-12/12 rounded-lg p-1 mx-10") }}
+
+                    {{ form.dag.csrf_token }}
+                    {{ form.dag.dag.label (class="ml-10 mt-5 font-inter") }} {{ form.dag.dag(class="border border-gray-300 bg-transparent rounded-lg p-1 mx-10 w-12/12") }}
+                    {{ form.dag.schedule.label (class="ml-10 mt-5 font-inter") }} {{ form.dag.schedule(class="border border-gray-300 bg-transparent p-1 rounded-lg mx-10 w-12/12") }}
+
+                    {{ form.origem.csrf_token }}
+                    {{ form.origem.sistema_origem.label (class="ml-10 mt-5 font-inter") }} {{ form.origem.sistema_origem(class="border border-gray-300 bg-transparent p-1 rounded-lg w-12/12 mx-10") }}
+                    {{ form.origem.tabela_origem.label (class="ml-10 mt-5 font-inter") }} {{ form.origem.tabela_origem(class="border border-gray-300 bg-transparent p-1 rounded-lg w-12/12 mx-10") }}
+
+                    <div id="colunas-container" class="grid grid-cols-2 gap-4">
+                        {% for coluna in form.colunas %}
+                            {{ coluna.csrf_token }}
+                            <div class="font-inter ml-10 mt-5">
+                                {{ coluna.nome_coluna.label (class="font-inter") }} {{ coluna.nome_coluna(class="flex w-full rounded-lg border border-gray-300 bg-transparent p-1 text-sm placeholder:text-gray-400  mt-1")  }} 
+                            </div>
+                            <div class="font-inter mr-10 mt-5">
+                            {{ coluna.tipo_dado.label (class="font-inter mt-5") }} {{ coluna.tipo_dado(class="flex w-full rounded-lg border border-gray-300 bg-transparent p-1 text-sm placeholder:text-gray-400  mt-1")  }} 
+                            </div>
+                        {% endfor %}
+                    </div>
+
+                {{form.btnSubmit(class="bg-green-500 mt-5 w-28 mx-auto p-2 rounded-lg cursor-pointer")}}
+            </form>
+        </div>
     </div>
+    
+{% endblock %}
 
-    <button type="submit">Salvar</button>
-</form>

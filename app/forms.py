@@ -43,5 +43,7 @@ class TabelaForm(FlaskForm):
     origem = FormField(OrigemForm)
     colunas = FieldList(FormField(ColunasForm), min_entries=1, max_entries=50)
 
+    btnSubmit = SubmitField('Salvar Tabela')
+
     
        
