@@ -53,8 +53,8 @@ class Tabela(db.Model):
 
 class Colunas(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    nome_coluna = db.Column(db.String, nullable=False)
-    tipo_dado = db.Column(db.String, nullable=False)
+    nome_coluna = db.Column(db.String(100), nullable=False)
+    tipo_dado = db.Column(db.String(50), nullable=False)
 
     tabela_id = db.Column(db.Integer, db.ForeignKey('tabela.id', name="fk_colunas_tabela"), nullable=False)
     tabela = db.relationship('Tabela', back_populates='colunas')

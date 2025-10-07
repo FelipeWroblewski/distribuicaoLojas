@@ -1,5 +1,6 @@
+import traceback
 from app import app, db, socketio
-from flask import Flask, render_template, send_from_directory, url_for, request, redirect, jsonify, flash, current_app, send_file, make_response, send_from_directory
+from flask import Flask, abort, render_template, send_from_directory, url_for, request, redirect, jsonify, flash, current_app, send_file, make_response, send_from_directory
 from flask_login import login_user, logout_user, current_user, login_required
 from app.forms import LoginForm, TabelaForm, OrigemForm, ColunasForm, DagForm
 from app.models import User, Tabela, Dag, Colunas, Origem
@@ -10,6 +11,8 @@ from sqlalchemy.orm import joinedload
 from sqlalchemy import desc
 from werkzeug.utils import secure_filename
 import os
+import re
+import sys
 import base64
 import pandas as pd
 import uuid
@@ -78,10 +81,12 @@ def home():
 #############################################
 
 # ESTOQUE DE PRODUTOS
-@app.route('/esquemaApi/')
+@app.route('/esquemaApi/<string:nome_esquema>', methods=['GET'])
 @login_required
-def esquemaApi():
-    return render_template('Esquemas/esquemaApi.html', tabelas=Tabela.query.options())
+def esquemaApi(nome_esquema):
+    tabelas_do_esquema = get_tabelas_por_esquema(nome_esquema)
+
+    return render_template('Esquemas/esquemaApi.html', esquema_atual=nome_esquema, tabelas=tabelas_do_esquema)
 
 #############################################
 ######## PAGE ESQUEMA COMERCIAL ###############
@@ -208,77 +213,160 @@ def distribuicao():
 @app.route('/processarTabela', methods=['GET', 'POST'])
 @login_required
 def processarTabela():
+    print(">>> ENTROU NO ENDPOINT /processarTabela")
     form = TabelaForm()
 
-    if form.validate_on_submit():
-        
-        try: # << ADICIONE O BLOCO TRY
-            # Criar DAG e Origem
-            dag = Dag(
-                dag=form.dag.dag.data,
-                schedule=form.dag.schedule.data
-            )
-            origem = Origem(
-                sistema_origem=form.origem.sistema_origem.data,
-                tabela_origem=form.origem.tabela_origem.data
-            )
-
-            db.session.add(dag)
-            db.session.add(origem)
-            db.session.flush()  # gera IDs
-
-            # Criar Tabela
-            tabela = Tabela(
-                nome_tabela=form.nome_tabela.data,
-                descricao_tabela=form.descricao_tabela.data,
-                esquema=form.esquema.data,
-                dag=dag, # Estes objetos já estão na sessão (flush)
-                origem=origem # Eles serão referenciados corretamente
-            )
-            db.session.add(tabela)
-            db.session.flush() # Para gerar o ID da Tabela antes de usar nas Colunas
-
-            # Criar colunas da tabela (FieldList)
-            for coluna_form in form.colunas.entries:
-                coluna = Colunas(
-                    nome_coluna=coluna_form.form.nome_coluna.data,
-                    tipo_dado=coluna_form.form.tipo_dado.data,
-                    tabela=tabela # Objeto Tabela que agora tem um ID
-                )
-                db.session.add(coluna)
-
-            db.session.commit() # << VERIFIQUE SE ESTE PONTO É ALCANÇADO
-
-            flash("Tabela criada com sucesso!", "success")
-            return redirect(url_for('processarTabela'))
-            
-        except Exception as e: # << ADICIONE O TRATAMENTO DE ERROS
-            db.session.rollback() # É CRUCIAL FAZER O ROLLBACK EM CASO DE ERRO
-            print(f">>> ERRO ao salvar no banco: {e}")
-            flash(f"Ocorreu um erro ao criar a tabela. Detalhes: {e}", "danger")
-            # Voltar ao formulário com os dados
-            return render_template('formTabela.html', form=form, tabelas=tabelas)
+    print("Tipo de requisição:", request.method)
+    if request.method == 'POST':
+        print("Formulário submetido via POST.")
     else:
-        # Este loop irá iterar sobre os erros de todos os campos
-        for field, errors in form.errors.items():
-            # ATENÇÃO: Os campos FormField e FieldList podem ter erros aninhados
-            print(f"Campo principal: '{field}'")
-            for error in errors:
-                print(f"   -> Erro: {error}")
+        print("Requisição GET recebida.")
+    
+    if form.validate_on_submit():
+        print("Formulário validado com sucesso.")
+    else:
+        print("Erros de validação:", form.errors)
 
     try:
+        from sqlalchemy.orm import joinedload 
+        
         tabelas = Tabela.query.options(
             joinedload(Tabela.dag),
             joinedload(Tabela.origem)
         ).all()
     except Exception as e:
-        print(f">>> ERRO ao buscar tabelas: {e}")
+        # MUDANÇA CRÍTICA: Usando o logger do Flask com exc_info=True
+        app.logger.error(">>> ERRO CRÍTICO DURANTE A BUSCA DE TABELAS (GET/LOAD)")
+        # Este comando irá imprimir a pilha de chamadas completa (traceback)
+        app.logger.error("Rastreamento Completo da Exceção:", exc_info=True)
+        
         tabelas = []
 
+    if form.validate_on_submit():
+        # DIAGNOSTICO 1: O FORMULÁRIO FOI SUBMETIDO E PASSOU NA VALIDAÇÃO?
+        print("DIAGNOSTICO 1: Form submetido e validado com sucesso. Prosseguindo...")
+        
+        nome_esquema = form.esquema.data
+        sql_query = form.create_table_sql.data
+        
+        # DIAGNOSTICO 2: VERIFICAR SE A QUERY NÃO ESTÁ VAZIA
+        if not sql_query or not nome_esquema:
+            flash("O campo SQL ou Esquema está vazio.", "danger")
+            return render_template('formTabela.html', form=form, tabelas=tabelas)
+
+        try:
+            colunas_analisadas = parse_create_table_sql(sql_query)
+        except Exception as e:
+            # DIAGNOSTICO 3: O PARSER FALHOU?
+            print(f">>> DIAGNOSTICO 3: ERRO CRÍTICO NO PARSER SQL: {e}")
+            flash(f"Falha na análise da query SQL. Erro: {e}", "danger")
+            return render_template('formTabela.html', form=form, tabelas=tabelas)
+
+        # DIAGNOSTICO 4: QUANTAS COLUNAS FORAM ANALISADAS?
+        print(f"DIAGNOSTICO 4: {len(colunas_analisadas)} colunas analisadas com sucesso.")
+
+        try: 
+            # ... (código para criar Dag, Origem, Tabela, Colunas) ...
+            
+            # DIAGNOSTICO 5: CHEGOU NO COMMIT?
+            print("DIAGNOSTICO 5: Tentando db.session.commit()...")
+            
+            db.session.commit()
+            
+            # DIAGNOSTICO 6: COMMIT SUCESSO?
+            print("DIAGNOSTICO 6: SUCESSO! Dados salvos.")
+
+            flash("Tabela criada com sucesso!", "success")
+            return redirect(url_for('esquemaApi', nome_esquema=nome_esquema))
+            
+        except Exception as e:
+            db.session.rollback() 
+            # DIAGNOSTICO 7: ERRO NO COMMIT. ONDE ESTÁ A EXCEÇÃO?
+            print("=================================================================")
+            print(f">>> DIAGNOSTICO 7: ERRO AO SALVAR NO BANCO (COMMIT FAILED): {e}")
+            print("=================================================================")
+            
+            flash(f"Ocorreu um erro de banco de dados. Verifique o console. Detalhes: {e}", "danger")
+            return render_template('formTabela.html', form=form, tabelas=tabelas)
+            
+    else:
+        # DIAGNOSTICO 8: O FORMULÁRIO NÃO PASSOU NA VALIDAÇÃO (GET ou POST falhou a validação)
+        print("DIAGNOSTICO 8: Requisição GET ou validação do formulário falhou.")
+        # Se você está vendo este print no POST, olhe os erros de validação no seu console:
+        for field, errors in form.errors.items():
+             print(f"Erro de validação no campo '{field}': {errors}")
 
     return render_template('formTabela.html', form=form, tabelas=tabelas)
 
+##################################################
+#### FUNÇÃO PARA CRIAR DADOS DA TABELA COLUNAS####
+##################################################
+
+import re
+
+def parse_create_table_sql(sql_query):
+
+    sql_query = re.sub(r'--.*', '', sql_query)
+    sql_query = re.sub(r'/\*.*?\*/', '', sql_query, flags=re.DOTALL)
     
+    # Normaliza espaços
+    sql_query = re.sub(r'\s+', ' ', sql_query).strip()
+    
+    match = re.search(r'\((.*)\)', sql_query, re.IGNORECASE | re.DOTALL)
+    
+    if not match:
+        
+        return []
+
+    table_body = match.group(1).strip()
+
+    column_definitions = table_body.split(',')
+    
+    columns = []
+    
+    for definition in column_definitions:
+        
+        clean_def = definition.strip()
+        if not clean_def:
+            continue
+
+        
+        match_col = re.match(r'^\s*"?([a-zA-Z_][a-zA-Z0-9_]*)"?\s+(.+)$', clean_def, re.IGNORECASE | re.DOTALL)
+        
+        if match_col:
+            col_name = match_col.group(1)
+            type_and_constraints = match_col.group(2).strip()
+            
+            
+            columns.append({
+                'nome': col_name,
+                'tipo': type_and_constraints
+            })
+        else:
+            
+            if 'primary key' in clean_def.lower() or 'foreign key' in clean_def.lower() or 'constraint' in clean_def.lower():
+                continue
+
+            
+            print(f"Aviso: Não foi possível analisar a definição de coluna: {clean_def}")
+
+
+    return columns
+    
+##################################################
+#### FUNÇÃO PARA VISUALIZAR DADOS DA TABELA#######
+##################################################
+
+def get_tabelas_por_esquema(nome_esquema):
+
+    from sqlalchemy.orm import joinedload
+    
+    tabelas = Tabela.query.options(
+        joinedload(Tabela.dag),
+        joinedload(Tabela.origem)
+    ).filter_by(esquema=nome_esquema).all()
+    
+    return tabelas
 
 ################################################
 ######## FUNÇÃO PARA PUXAR ARQUIVO CSV##########

@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm
 from app import db, bcrypt,app
-from wtforms import FieldList, FormField, StringField, SubmitField, PasswordField, FileField
+from wtforms import FieldList, FormField, StringField, SubmitField, PasswordField, FileField, TextAreaField
 from flask_wtf.file import FileField, FileAllowed
 from wtforms.validators import DataRequired, Email, Length, EqualTo, Optional, ValidationError
 
@@ -27,8 +27,8 @@ class DagForm(FlaskForm):
     schedule = StringField('Schedule', validators=[DataRequired(), Length(min=2, max=50)])
 
 class ColunasForm(FlaskForm):
-    nome_coluna = StringField('Nome da Coluna', validators=[DataRequired(), Length(min=1, max=50)])
-    tipo_dado = StringField('Tipo de Dado', validators=[DataRequired(), Length(min=1, max=50)])
+    nome_coluna = StringField('Nome da Coluna')
+    tipo_dado = StringField('Tipo de Dado')
 
 class OrigemForm(FlaskForm):
     sistema_origem = StringField('Sistema Origem', validators=[DataRequired(), Length(min=2, max=30)])
@@ -41,7 +41,8 @@ class TabelaForm(FlaskForm):
 
     dag = FormField(DagForm)
     origem = FormField(OrigemForm)
-    colunas = FieldList(FormField(ColunasForm), min_entries=1, max_entries=50)
+    create_table_sql = TextAreaField('Query SQL CREATE TABLE', 
+                                     description="Cole aqui o SQL completo de CREATE TABLE.")
 
     btnSubmit = SubmitField('Salvar Tabela')
 
