@@ -208,24 +208,13 @@ def distribuicao():
     return render_template('distribuicao.html', tabelaDistribuicao="")  # começa vazio
 
 ################################################
-#### FUNÇÃO PARA SEPARAR AS TABELAS DO FORM ####
+#### FUNÇÃO PARA PROCESSAR AS TABELAS  #########
 ################################################
 @app.route('/processarTabela', methods=['GET', 'POST'])
 @login_required
 def processarTabela():
-    print(">>> ENTROU NO ENDPOINT /processarTabela")
+   
     form = TabelaForm()
-
-    print("Tipo de requisição:", request.method)
-    if request.method == 'POST':
-        print("Formulário submetido via POST.")
-    else:
-        print("Requisição GET recebida.")
-    
-    if form.validate_on_submit():
-        print("Formulário validado com sucesso.")
-    else:
-        print("Erros de validação:", form.errors)
 
     try:
         from sqlalchemy.orm import joinedload 
@@ -234,6 +223,7 @@ def processarTabela():
             joinedload(Tabela.dag),
             joinedload(Tabela.origem)
         ).all()
+
     except Exception as e:
         # MUDANÇA CRÍTICA: Usando o logger do Flask com exc_info=True
         app.logger.error(">>> ERRO CRÍTICO DURANTE A BUSCA DE TABELAS (GET/LOAD)")
@@ -243,56 +233,71 @@ def processarTabela():
         tabelas = []
 
     if form.validate_on_submit():
-        # DIAGNOSTICO 1: O FORMULÁRIO FOI SUBMETIDO E PASSOU NA VALIDAÇÃO?
-        print("DIAGNOSTICO 1: Form submetido e validado com sucesso. Prosseguindo...")
         
         nome_esquema = form.esquema.data
         sql_query = form.create_table_sql.data
+
+        colunas_analisadas = parse_create_table_sql(sql_query)
         
-        # DIAGNOSTICO 2: VERIFICAR SE A QUERY NÃO ESTÁ VAZIA
-        if not sql_query or not nome_esquema:
+        if not colunas_analisadas or not nome_esquema:
             flash("O campo SQL ou Esquema está vazio.", "danger")
-            return render_template('formTabela.html', form=form, tabelas=tabelas)
+            return render_template('formTabela.html', form=form, tabelas=Tabela.query.all())
 
         try:
-            colunas_analisadas = parse_create_table_sql(sql_query)
-        except Exception as e:
-            # DIAGNOSTICO 3: O PARSER FALHOU?
-            print(f">>> DIAGNOSTICO 3: ERRO CRÍTICO NO PARSER SQL: {e}")
-            flash(f"Falha na análise da query SQL. Erro: {e}", "danger")
-            return render_template('formTabela.html', form=form, tabelas=tabelas)
+            # Criar DAG e Origem
+            dag = Dag(
+                dag=form.dag.dag.data,
+                schedule=form.dag.schedule.data
+            )
+            origem = Origem(
+                sistema_origem=form.origem.sistema_origem.data,
+                tabela_origem=form.origem.tabela_origem.data
+            )
 
-        # DIAGNOSTICO 4: QUANTAS COLUNAS FORAM ANALISADAS?
-        print(f"DIAGNOSTICO 4: {len(colunas_analisadas)} colunas analisadas com sucesso.")
+            db.session.add(dag)
+            db.session.add(origem)
+            db.session.flush()
 
-        try: 
-            # ... (código para criar Dag, Origem, Tabela, Colunas) ...
-            
-            # DIAGNOSTICO 5: CHEGOU NO COMMIT?
-            print("DIAGNOSTICO 5: Tentando db.session.commit()...")
-            
+            # Criar Tabela
+            tabela = Tabela(
+                nome_tabela=form.nome_tabela.data,
+                descricao_tabela=form.descricao_tabela.data,
+                esquema=form.esquema.data,
+                dag=dag,
+                origem=origem
+            )
+            db.session.add(tabela)
+            db.session.flush()
+
+            # 2. Criar e adicionar as colunas do resultado da análise SQL
+            colunas_salvas = []
+            for col_info in colunas_analisadas:
+                coluna = Colunas(
+                    nome_coluna=col_info['nome'],
+                    # O tipo de dado é tudo o que veio depois do nome da coluna (incluindo restrições)
+                    tipo_dado=col_info['tipo'], 
+                    tabela=tabela # Objeto Tabela que agora tem um ID
+                )
+                colunas_salvas.append(coluna)
+                db.session.add(coluna)
+                
+            # Adicionar as colunas em lote (opcional, mas bom para clareza)
+            # db.session.add_all(colunas_salvas) # Já estamos adicionando uma a uma no loop acima.
+
             db.session.commit()
-            
-            # DIAGNOSTICO 6: COMMIT SUCESSO?
-            print("DIAGNOSTICO 6: SUCESSO! Dados salvos.")
 
-            flash("Tabela criada com sucesso!", "success")
-            return redirect(url_for('esquemaApi', nome_esquema=nome_esquema))
+            flash("Tabela e Colunas criadas com sucesso a partir da query SQL!", "success")
+            return redirect(url_for('processarTabela', nome_esquema=nome_esquema))
+            
             
         except Exception as e:
             db.session.rollback() 
-            # DIAGNOSTICO 7: ERRO NO COMMIT. ONDE ESTÁ A EXCEÇÃO?
-            print("=================================================================")
-            print(f">>> DIAGNOSTICO 7: ERRO AO SALVAR NO BANCO (COMMIT FAILED): {e}")
-            print("=================================================================")
             
             flash(f"Ocorreu um erro de banco de dados. Verifique o console. Detalhes: {e}", "danger")
             return render_template('formTabela.html', form=form, tabelas=tabelas)
             
     else:
-        # DIAGNOSTICO 8: O FORMULÁRIO NÃO PASSOU NA VALIDAÇÃO (GET ou POST falhou a validação)
-        print("DIAGNOSTICO 8: Requisição GET ou validação do formulário falhou.")
-        # Se você está vendo este print no POST, olhe os erros de validação no seu console:
+
         for field, errors in form.errors.items():
              print(f"Erro de validação no campo '{field}': {errors}")
 

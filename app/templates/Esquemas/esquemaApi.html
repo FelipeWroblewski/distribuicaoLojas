@@ -28,11 +28,11 @@
                         {% for tabela in tabelas %}
                             <tr>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                                    <a href="">{{ tabelas.nome_tabela }}</a>
+                                    <a href="">{{ tabela.nome_tabela }}</a>
                                 </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ tabelas.descricao_tabela }}</td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ tabelas.dag.schedule }}</td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ tabelas.origem.sistema_origem }}</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ tabela.descricao_tabela }}</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ tabela.dag.schedule }}</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ tabela.origem.sistema_origem }}</td>
                             </tr>
                         {% endfor %}
                     </tbody>
