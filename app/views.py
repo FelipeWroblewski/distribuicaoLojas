@@ -88,14 +88,21 @@ def esquemaApi(nome_esquema):
     return render_template('Esquemas/esquemaApi.html', esquema_atual=nome_esquema, tabelas=tabelas_do_esquema)
 
 #############################################
-######## PAGE ESQUEMA API TABLES ############
+######## PAGE ESQUEMA TABLES ############
 #############################################
 
-@app.route('/tabelasApi', methods=['GET'])
+@app.route('/tabela/detalhes/<int:tabela_id>', methods=['GET'])
 @login_required
-def tabelasApi():
-    
-    return render_template('Esquemas/esquemaApi-Tabelas.html')
+def detalhesTabela(tabela_id):
+    from sqlalchemy.orm import joinedload
+
+    tabela = Tabela.query.options(
+        joinedload(Tabela.dag),
+        joinedload(Tabela.origem)
+    ).filter_by(id=tabela_id).first_or_404()
+
+    colunas = tabela.colunas
+    return render_template('tabela_detalhes.html', tabela=tabela, colunas=colunas)
 
 #############################################
 ######## PAGE ESQUEMA COMERCIAL ###############

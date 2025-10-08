@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+
+    <div class="h-screen w-full">
+        <div class="flex justify-center mt-48 flex-col bg-blue-700">
+            <p>Nome Tabela: {{ tabela.nome_tabela }}</p>
+            <p>Sistema Origem: {{ tabela.origem.sistema_origem }}</p>
+            <p>Tabela Origem: {{ tabela.origem.tabela_origem }}</p>
+            <p>Nome DAG: {{ tabela.dag.dag }}</p> 
+            <p>Schedule: {{ tabela.dag.schedule }}</p>
+
+            {%for coluna in colunas%}
+                <div class="mb-3 p-3 border-b border-gray-200">
+                    <p><strong>Nome coluna:</strong> {{ coluna.nome_coluna }}</p>
+                    <p><strong>Tipo de dado:</strong> {{ coluna.tipo_dado }}</p>
+                    
+                    </div>
+
+            {% else %}
+                <p class="text-gray-500">Nenhuma coluna foi encontrada para esta tabela.</p>
+            {% endfor %}
+        </div>
+    </div>
+    
+    
+{% endblock %}
