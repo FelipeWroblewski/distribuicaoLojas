@@ -10,6 +10,7 @@ module.exports = {
       colors: {
         begePrincipal: "#b7a696",
         begeForte: "#846c5b",
+        begeFraco2: "#F0ECE6",
         brancoPrincipal: "#ffffff",
         brancoCinza: "#eeeeee",
         brancoBorda: "#CECECE",

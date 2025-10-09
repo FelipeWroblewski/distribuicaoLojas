@@ -7,36 +7,42 @@
 
     <div class="h-screen w-full">
         <div class="flex justify-center pt-36 pl-20 flex-col">
-            <h1 class="text-5xl font-inter">{{ tabela.nome_tabela }}</h1>
-            <div class="flex flex-row mt-10">
-                <div class="w-1/2">
-                <h3 class="text-2xl font-inter">{{ tabela.origem.sistema_origem }}</h3>
-                <p>{{ tabela.origem.tabela_origem }}</p>
-            </div>
-            <div class="w-full ml-20">
-                <h3 class="text-2xl font-inter">{{ tabela.dag.dag }}</h3>
-                <p>{{ tabela.dag.schedule }}</p>
-            </div>
+            <h1 class="text-4xl font-bold font-inter">{{ tabela.nome_tabela }}</h1>
+            <div class="flex flex-row mt-10 w-1/2 bg-white shadow-xl rounded-lg p-6 border-gray-200 border">
+                <div class="w-1/2 p-2 border-2 border-begeForte bg-begeFraco2 rounded-lg">
+                    <h3 class="text-lg font-inter text-begeForte"><span class="font-bold">Sistema:</span> {{ tabela.origem.sistema_origem }}</h3>
+                    <p class="text-md font-inter text-begeForte"><span class="font-bold">Tela de origem:</span> {{ tabela.origem.tabela_origem }}</p>
+                </div>
+                <div class="w-1/2 ml-20 p-2 border-2 border-begeForte bg-begeFraco2 rounded-lg">
+                    <h3 class="text-lg text-begeForte font-inter"><span class="font-bold">Nome da dag:</span> {{ tabela.dag.dag }}</h3>
+                    <p class="text-md font-inter text-begeForte"><span class="font-bold">Schedule:</span> {{ tabela.dag.schedule }}</p>
+                </div>
             </div>
             
-            <thead class="bg-gray-100">
-                <tr>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Nome da coluna</th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Tipo de dado</th>
-                </tr>
-            </thead>
-            <tbody class="bg-white divide-y  divide-gray-200">
-                {%for coluna in colunas%}
-                <tr>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ coluna.nome_coluna }}</td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ coluna.tipo_dado }}</td>
-                </tr>     
-            {% else %}
-                <td>Nenhuma coluna foi encontrada para esta tabela.</td>
-            {% endfor %}
-            </tbody>
-
-            
+            <h1 class="mt-10 font-inter text-4xl mb-4">Colunas da Tabela</h1>
+            <div class="bg-white shadow-xl w-1/2 rounded-lg p-6 border border-gray-200">
+                <div class="rounded-md border-2 border-begeForte full shadow-md overflow-hidden">
+                    <table class="w-full divide-y-2 divide-begeForte">
+                        <thead class="bg-begePrincipal">
+                            <tr>
+                                <th class="px-6 py-3 text-left text-xs font-inter text-begeForte uppercase tracking-wider font-bold">Nome da coluna</th>
+                                <th class="px-6 py-3 text-left text-xs font-inter font-bold text-begeForte uppercase tracking-wider">Tipo de dado</th>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-white divide-y  divide-gray-200">
+                            {%for coluna in colunas%}
+                            <tr class="odd:bg-begeFraco2 even:bg-brancoPrincipal">
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-begeForte text-left font-inter ">{{ coluna.nome_coluna }}</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-begeForte text-left font-inter">{{ coluna.tipo_dado }}</td>
+                                {% else %}
+                                    <td>Nenhuma coluna foi encontrada para esta tabela.</td>
+                                {% endfor %}
+                            </tr>   
+                        </tbody>
+                    </table>
+                </div>
+           </div>     
+              
         </div>
     </div>
     
