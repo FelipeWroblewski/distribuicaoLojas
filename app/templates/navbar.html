@@ -2,7 +2,7 @@
         <header class="flex items-center justify-between bg-gradient-to-r from-begePrincipal to-begeForte h-20 w-full flex-row text-brancoCinza fixed">
             <div class="flex items-center gap-4 ml-10">
                 <button id="toogleSidebar">
-                    <i class="fa-solid fa-bars text-4xl cursor-pointer"></i>
+                    <i class="fa-solid fa-bars text-3xl cursor-pointer"></i>
                 </button>
                 <a href="{{url_for('home')}}" class="decoration-0">
                     <img src="{{url_for('static', filename='imgs/livetech.png')}}" alt="" class="w-40">
@@ -34,31 +34,31 @@
                     
                     <label for="toogleFerramentas" class="flex justify-center items-center cursor-pointer mt-10 gap-20">
                         <div class="flex items-center gap-2 flex-row">
-                            <i class="fa-solid fa-screwdriver-wrench text-2xl text-brancoPrincipal"></i>
-                            <span class="text-2xl text-brancoPrincipal font-inter">Ferramentas</span>
+                            <i class="fa-solid fa-screwdriver-wrench text-lg text-brancoPrincipal"></i>
+                            <span class="text-lg text-brancoPrincipal font-inter">Ferramentas</span>
                         </div>
                         <i class="fa-solid fa-caret-right text-2xl text-brancoPrincipal w-4 h-4 transition-transform duration-300 ease-in-out peer-checked:rotate-90"></i>
                     </label>
 
                     <div
-                        class="flex flex-col mt-2 space-y-2 px-4 max-h-0 overflow-hidden transition-all duration-300 ease-in-out peer-checked:max-h-56 relative pl-5 
-                                before:content-[''] before:absolute before:left-5 before:w-[2px] before:h-[calc(90%-15px)] before:bg-brancoPrincipal before:rounded-[5px]">
+                        class="flex flex-col mt-2 space-y-2 px-4 max-h-0 overflow-hidden transition-all duration-300 ease-in-out peer-checked:max-h-56 relative pl-8
+                                before:content-[''] before:absolute before:left-8 before:w-[2px] before:h-[calc(90%-10px)] before:bg-brancoPrincipal before:rounded-[5px]">
                         
-                        <ul class="list-none mt-5 p-0">
+                        <ul class="list-none mt-5 ">
                             <li class="ml-5 mb-10 relative font-inter font-light
                                     before:content-[''] before:absolute before:top-1 before:left-[-20px] before:w-[20px] before:h-[20px] 
                                     before:border-l-2 before:border-b-2 before:border-brancoPrincipal before:rounded-bl-[10px] before:translate-y-[-50%]">
-                            <a class="ml-5 text-lg text-brancoPrincipal" href="{{url_for('distribuicao')}}">Distribuição Lojas</a>
+                            <a class="ml-5 text-md text-brancoPrincipal" href="{{url_for('distribuicao')}}">Distribuição Lojas</a>
                             </li>
                             <li class="ml-5 mb-10 relative font-inter font-light
                                     before:content-[''] before:absolute before:top-1 before:left-[-20px] before:w-[20px] before:h-[20px] 
                                     before:border-l-2 before:border-b-2 before:border-brancoPrincipal before:rounded-bl-[10px] before:translate-y-[-50%]">
-                            <a class="ml-5 text-lg text-brancoPrincipal" href="{{url_for('distribuicao')}}">Distribuição Lojas</a>
+                            <a class="ml-5 text-md text-brancoPrincipal" href="{{url_for('distribuicao')}}">Distribuição Lojas</a>
                             </li>
                             <li class="ml-5 relative font-inter font-light
                                     before:content-[''] before:absolute before:top-1 before:left-[-20px] before:w-[20px] before:h-[20px] 
                                     before:border-l-2 before:border-b-2 before:border-brancoPrincipal before:rounded-bl-[10px] before:translate-y-[-50%]">
-                            <a class="ml-5 text-lg text-brancoPrincipal" href="{{url_for('distribuicao')}}">Distribuição Lojas</a>
+                            <a class="ml-5 text-md text-brancoPrincipal" href="{{url_for('distribuicao')}}">Distribuição Lojas</a>
                             </li>
                         </ul>
                     </div>
@@ -72,14 +72,14 @@
 
                     <label for="toogleDW" class="flex justify-center items-center cursor-pointer mt-5 gap-14">
                         <div class="flex items-center gap-2 flex-row text-2xl ">
-                            <i class="fa-solid fa-chart-line text-2xl text-brancoPrincipal"></i>
-                            <span class="text-2xl text-brancoPrincipal font-inter">Esquemas</span>
+                            <i class="fa-solid fa-chart-line text-lg text-brancoPrincipal"></i>
+                            <span class="text-lg text-brancoPrincipal font-inter">Esquemas</span>
                         </div>
                         <i class="fa-solid fa-caret-right text-2xl text-brancoPrincipal w-4 h-4 ml-11 transition-transform duration-300 ease-in-out peer-checked:rotate-90"></i>
                     </label>
 
                     <div class="flex flex-col mt-2 space-y-2 px-4 max-h-0 overflow-hidden
-                                    transition-all duration-300 ease-in-out peer-checked:max-h-[70vh] relative pl-1">
+                                    transition-all duration-300 ease-in-out peer-checked:max-h-[70vh] relative pl-5">
                         <!-- ul com a linha como pseudo-elemento: -->
                         <ul class="list-none mt-5 p-0 pl-6 relative
                                     before:content-[''] before:absolute before:left-3 before:top-0 before:h-[calc(100%-50px)]
@@ -87,62 +87,62 @@
                             <li class="ml-2 mb-6 relative font-inter font-light
                                     before:content-[''] before:absolute before:top-1 before:left-[-20px] before:w-[20px] before:h-[20px] 
                                     before:border-l-2 before:border-b-2 before:border-brancoPrincipal before:rounded-bl-[10px] before:translate-y-[-50%]">
-                            <a class="pl-5 text-lg text-brancoPrincipal" href="{{url_for('esquemaApi', nome_esquema='Api')}}">Api</a>
+                            <a class="pl-5 text-md text-brancoPrincipal" href="{{url_for('esquemaApi', nome_esquema='Api')}}">Api</a>
                             </li>
                             <li class="ml-2 mb-6 relative font-inter font-light
                                     before:content-[''] before:absolute before:top-1 before:left-[-20px] before:w-[20px] before:h-[20px] 
                                     before:border-l-2 before:border-b-2 before:border-brancoPrincipal before:rounded-bl-[10px] before:translate-y-[-50%]">
-                            <a class="pl-5 text-lg text-brancoPrincipal" href="{{url_for('esquemaComercial', nome_esquema='Comercial')}}">Comercial</a>
+                            <a class="pl-5 text-md text-brancoPrincipal" href="{{url_for('esquemaComercial', nome_esquema='Comercial')}}">Comercial</a>
                             </li>
                             <li class="ml-2 mb-6 relative font-inter font-light
                                     before:content-[''] before:absolute before:top-1 before:left-[-20px] before:w-[20px] before:h-[20px] 
                                     before:border-l-2 before:border-b-2 before:border-brancoPrincipal before:rounded-bl-[10px] before:translate-y-[-50%]">
-                            <a class="pl-5 text-lg text-brancoPrincipal" href="{{url_for('esquemaEstoque', nome_esquema='Estoque')}}">Estoque</a>
+                            <a class="pl-5 text-md text-brancoPrincipal" href="{{url_for('esquemaEstoque', nome_esquema='Estoque')}}">Estoque</a>
                             </li>
                             <li class="ml-2 mb-6 relative font-inter font-light
                                     before:content-[''] before:absolute before:top-1 before:left-[-20px] before:w-[20px] before:h-[20px] 
                                     before:border-l-2 before:border-b-2 before:border-brancoPrincipal before:rounded-bl-[10px] before:translate-y-[-50%]">
-                            <a class="pl-5 text-lg text-brancoPrincipal" href="{{url_for('esquemaEventos', nome_esquema='Eventos')}}">Eventos</a>
+                            <a class="pl-5 text-md text-brancoPrincipal" href="{{url_for('esquemaEventos', nome_esquema='Eventos')}}">Eventos</a>
                             </li>
                             <li class="ml-2 mb-6 relative font-inter font-light
                                     before:content-[''] before:absolute before:top-1 before:left-[-20px] before:w-[20px] before:h-[20px] 
                                     before:border-l-2 before:border-b-2 before:border-brancoPrincipal before:rounded-bl-[10px] before:translate-y-[-50%]">
-                            <a class="pl-5 text-lg text-brancoPrincipal" href="{{url_for('esquemaLive', nome_esquema='Live')}}">Live</a>
+                            <a class="pl-5 text-md text-brancoPrincipal" href="{{url_for('esquemaLive', nome_esquema='Live')}}">Live</a>
                             </li>
                             <li class="ml-2 mb-6 relative font-inter font-light
                                     before:content-[''] before:absolute before:top-1 before:left-[-20px] before:w-[20px] before:h-[20px] 
                                     before:border-l-2 before:border-b-2 before:border-brancoPrincipal before:rounded-bl-[10px] before:translate-y-[-50%]">
-                            <a class="pl-5 text-lg text-brancoPrincipal" href="{{url_for('esquemaMarft', nome_esquema='Marft')}}">Marft</a>
+                            <a class="pl-5 text-md text-brancoPrincipal" href="{{url_for('esquemaMarft', nome_esquema='Marft')}}">Marft</a>
                             </li>
                             <li class="ml-2 mb-6 relative font-inter font-light
                                     before:content-[''] before:absolute before:top-1 before:left-[-20px] before:w-[20px] before:h-[20px] 
                                     before:border-l-2 before:border-b-2 before:border-brancoPrincipal before:rounded-bl-[10px] before:translate-y-[-50%]">
-                            <a class="pl-5 text-lg text-brancoPrincipal" href="{{url_for('esquemaPpcp', nome_esquema='Ppcp')}}">Ppcp</a>
+                            <a class="pl-5 text-md text-brancoPrincipal" href="{{url_for('esquemaPpcp', nome_esquema='Ppcp')}}">Ppcp</a>
                             </li>
                             <li class="ml-2 mb-6 relative font-inter font-light
                                     before:content-[''] before:absolute before:top-1 before:left-[-20px] before:w-[20px] before:h-[20px] 
                                     before:border-l-2 before:border-b-2 before:border-brancoPrincipal before:rounded-bl-[10px] before:translate-y-[-50%]">
-                            <a class="pl-5 text-lg text-brancoPrincipal" href="{{url_for('esquemaRh', nome_esquema='Rh')}}">Rh</a>
+                            <a class="pl-5 text-md text-brancoPrincipal" href="{{url_for('esquemaRh', nome_esquema='Rh')}}">Rh</a>
                             </li>
                             <li class="ml-2 mb-6 relative font-inter font-light
                                     before:content-[''] before:absolute before:top-1 before:left-[-20px] before:w-[20px] before:h-[20px] 
                                     before:border-l-2 before:border-b-2 before:border-brancoPrincipal before:rounded-bl-[10px] before:translate-y-[-50%]">
-                            <a class="pl-5 text-lg text-brancoPrincipal" href="{{url_for('esquemaRh_sci', nome_esquema='Rh_sci')}}">Rh_sci</a>
+                            <a class="pl-5 text-md text-brancoPrincipal" href="{{url_for('esquemaRh_sci', nome_esquema='Rh_sci')}}">Rh_sci</a>
                             </li>
                             <li class="ml-2 mb-6 relative font-inter font-light
                                     before:content-[''] before:absolute before:top-1 before:left-[-20px] before:w-[20px] before:h-[20px] 
                                     before:border-l-2 before:border-b-2 before:border-brancoPrincipal before:rounded-bl-[10px] before:translate-y-[-50%]">
-                            <a class="pl-5 text-lg text-brancoPrincipal" href="{{url_for('esquemaSuprimentos', nome_esquema='Suprimentos')}}">Suprimentos</a>
+                            <a class="pl-5 text-md text-brancoPrincipal" href="{{url_for('esquemaSuprimentos', nome_esquema='Suprimentos')}}">Suprimentos</a>
                             </li>
                             <li class="ml-2 mb-6 relative font-inter font-light
                                     before:content-[''] before:absolute before:top-1 before:left-[-20px] before:w-[20px] before:h-[20px] 
                                     before:border-l-2 before:border-b-2 before:border-brancoPrincipal before:rounded-bl-[10px] before:translate-y-[-50%]">
-                            <a class="pl-5 text-lg text-brancoPrincipal" href="{{url_for('esquemaSustentabilidade', nome_esquema='Sustentabilidade')}}">Sustentabilidade</a>
+                            <a class="pl-5 text-md text-brancoPrincipal" href="{{url_for('esquemaSustentabilidade', nome_esquema='Sustentabilidade')}}">Sustentabilidade</a>
                             </li>
                             <li class="ml-2 mb-6 relative font-inter font-light
                                     before:content-[''] before:absolute before:top-1 before:left-[-20px] before:w-[20px] before:h-[20px] 
                                     before:border-l-2 before:border-b-2 before:border-brancoPrincipal before:rounded-bl-[10px] before:translate-y-[-50%]">
-                            <a class="pl-5 text-lg text-brancoPrincipal" href="{{url_for('esquemaTi', nome_esquema='Ti')}}">Ti</a>
+                            <a class="pl-5 text-md text-brancoPrincipal" href="{{url_for('esquemaTi', nome_esquema='Ti')}}">Ti</a>
                             </li>
                         </ul>
                     </div>
