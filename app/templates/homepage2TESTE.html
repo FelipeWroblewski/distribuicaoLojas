@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+{% block content %}
+{% include 'navbar.html' %}
+
+<!-- Container principal -->
+<div class="flex flex-col items-center justify-center w-full h-full bg-gray-100">
+
+  <!-- Logo central -->
+  <div class="mt-12">
+    <img src="{{ url_for('static', filename='img/logo_livetech.png') }}" alt="Logo LiveTech" class="w-64 mx-auto">
+  </div>
+
+  <!-- Cards de resumo -->
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mt-12 w-10/12">
+    <div class="bg-white rounded-2xl shadow p-6 text-center hover:scale-105 transition">
+      <h2 class="text-3xl font-bold text-gray-800">{{ total_esquemas }}</h2>
+      <p class="text-gray-500 mt-1">Esquemas</p>
+    </div>
+    <div class="bg-white rounded-2xl shadow p-6 text-center hover:scale-105 transition">
+      <h2 class="text-3xl font-bold text-gray-800">{{ total_tabelas }}</h2>
+      <p class="text-gray-500 mt-1">Tabelas</p>
+    </div>
+    <div class="bg-white rounded-2xl shadow p-6 text-center hover:scale-105 transition">
+      <h2 class="text-3xl font-bold text-gray-800">{{ total_colunas }}</h2>
+      <p class="text-gray-500 mt-1">Colunas</p>
+    </div>
+    <div class="bg-white rounded-2xl shadow p-6 text-center hover:scale-105 transition">
+      <h2 class="text-lg font-bold text-gray-800">{{ ultima_atualizacao }}</h2>
+      <p class="text-gray-500 mt-1">Última atualização</p>
+    </div>
+  </div>
+
+  <!-- Atalhos -->
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mt-10 w-10/12">
+    <a href="{{ url_for('listar_esquemas') }}" class="bg-gradient-to-r from-amber-600 to-amber-400 text-white rounded-2xl p-6 shadow text-center hover:opacity-90 transition">
+      <h3 class="font-semibold text-lg">📦 Ver Esquemas</h3>
+    </a>
+    <a href="{{ url_for('listar_tabelas') }}" class="bg-gradient-to-r from-amber-600 to-amber-400 text-white rounded-2xl p-6 shadow text-center hover:opacity-90 transition">
+      <h3 class="font-semibold text-lg">📋 Ver Tabelas</h3>
+    </a>
+    <a href="{{ url_for('buscar_tabela') }}" class="bg-gradient-to-r from-amber-600 to-amber-400 text-white rounded-2xl p-6 shadow text-center hover:opacity-90 transition">
+      <h3 class="font-semibold text-lg">🔍 Buscar Tabela</h3>
+    </a>
+    <a href="{{ url_for('historico_atualizacoes') }}" class="bg-gradient-to-r from-amber-600 to-amber-400 text-white rounded-2xl p-6 shadow text-center hover:opacity-90 transition">
+      <h3 class="font-semibold text-lg">🕒 Últimas Atualizações</h3>
+    </a>
+  </div>
+
+  <!-- Últimas atualizações -->
+  <div class="w-10/12 mt-12 bg-white rounded-2xl shadow p-6">
+    <h2 class="text-xl font-bold text-gray-700 mb-4">📅 Últimas Atualizações</h2>
+    {% if atualizacoes %}
+      <ul class="divide-y divide-gray-200">
+        {% for item in atualizacoes %}
+          <li class="py-3 flex justify-between items-center">
+            <span class="text-gray-800 font-medium">{{ item.nome_tabela }}</span>
+            <span class="text-gray-500 text-sm">{{ item.data_modificacao.strftime('%d/%m/%Y %H:%M') }}</span>
+          </li>
+        {% endfor %}
+      </ul>
+    {% else %}
+      <p class="text-gray-500">Nenhuma atualização recente encontrada.</p>
+    {% endif %}
+  </div>
+
+  <!-- Rodapé -->
+  <footer class="mt-10 mb-6 text-gray-400 text-sm">
+    © {{ current_year }} Live!Tech DW Docs — Todos os direitos reservados.
+  </footer>
+
+</div>
+
+{% endblock %}
