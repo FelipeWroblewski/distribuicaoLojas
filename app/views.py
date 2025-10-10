@@ -76,6 +76,46 @@ def logout():
 def home():
     return render_template('homepage2.html')
 
+@app.route('/pesquisar', methods=['GET'])
+@login_required
+def pesquisar():
+    termo_pesquisa = request.args.get('termo', '')
+
+    app.logger.debug("-" * 50)
+    app.logger.debug(f"[DEBUG 1] Termo recebido: '{termo_pesquisa}'")
+    
+    if not termo_pesquisa:
+        return redirect(url_for('home'))
+
+    # Gera o filtro SQL para pesquisa flexível (ex: '%termo%')
+    filtro = f"%{termo_pesquisa}%"
+    app.logger.debug(f"[DEBUG 2] Filtro de busca (LIKE): '{filtro}'")
+
+    # TESTE DE CONEXÃO: Tenta buscar todos os itens para garantir que a tabela é acessível
+    todos_itens = Tabela.query.all()
+    app.logger.debug(f"[DEBUG 3] Total de itens na tabela 'tabela': {len(todos_itens)}")
+    if len(todos_itens) == 0:
+        app.logger.warning("[AVISO CRÍTICO] A tabela está vazia. Verifique a string de conexão ou se os dados foram commitados.")
+    
+    # --- PONTO CHAVE: EXECUÇÃO DA BUSCA ---
+    tabela_encontrada = Tabela.query.filter(
+        Tabela.nome_tabela.ilike(filtro)
+    ).first()
+    # --------------------------------------
+    
+    app.logger.debug(f"[DEBUG 4] Resultado da query: {tabela_encontrada}")
+
+    if tabela_encontrada:
+        # SUCESSO: Redireciona
+        app.logger.debug(f"[DEBUG 5] SUCESSO! Redirecionando para ID: {tabela_encontrada.id}")
+        app.logger.debug("-" * 50)
+        return redirect(url_for('detalhesTabela', tabela_id=tabela_encontrada.id))
+    else:
+        # FALHA: Retorna para a home
+        app.logger.debug(f"[DEBUG 5] FALHA. Objeto Tabela é None. Voltando para home.")
+        app.logger.debug("-" * 50)
+        return redirect(url_for('home'))
+
 #############################################
 ######## PAGE ESQUEMA API ###############
 #############################################

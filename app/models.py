@@ -36,6 +36,9 @@ class Origem(db.Model):
 
 
 class Tabela(db.Model):
+
+    __tablename__ = 'tabela'
+
     id = db.Column(db.Integer, primary_key=True)
     nome_tabela = db.Column(db.String, nullable=False)
     descricao_tabela = db.Column(db.String, nullable=True)
@@ -49,6 +52,9 @@ class Tabela(db.Model):
 
     # Relacionamento com Colunas (uma tabela pode ter várias colunas)
     colunas = db.relationship('Colunas', back_populates='tabela', lazy=True, cascade="all, delete-orphan")
+
+    def __repr__(self):
+        return f"Tabela('{self.nome_tabela}')"
 
 
 class Colunas(db.Model):

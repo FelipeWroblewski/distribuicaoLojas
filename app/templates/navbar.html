@@ -25,14 +25,17 @@
 
         <div id="sidebar" class="fixed top-20 left-0 h-full w-80 bg-gradient-to-r from-begePrincipal to-bgSidebar shadow-lg transform -translate-x-full transition-transform duration-300 ease-in-out">
             <div class="flex flex-col h-full p-4 relative">
-                <input type="text" placeholder="Buscar..."
-                class="rounded-md border border-solid text-cinza border-cinza pl-10 p-1 focus:outline-none w-4/5 mx-auto bg-brancoCinza">
-                <i class="fa-solid fa-magnifying-glass absolute text-cinza left-16 top-6"></i>
-
+                <form class="mx-auto w-4/5" action="{{url_for('pesquisar')}}" method="GET">
+                    <input type="text" name="termo" placeholder="Buscar..." class="rounded-md border border-solid text-cinza border-cinza pl-10 p-1 focus:outline-none  bg-brancoCinza">
+                    <button type="submit">
+                        <i class="fa-solid fa-magnifying-glass absolute text-cinza left-16 top-6"></i>
+                    </button>
+                </form>
+                
                 <div class="ferramentas-menu-wrapper">
                     <input type="checkbox" id="toogleFerramentas" class="peer hidden">
                     
-                    <label for="toogleFerramentas" class="flex justify-center items-center cursor-pointer mt-10 gap-20">
+                    <label for="toogleFerramentas" class="flex justify-center items-center cursor-pointer mt-3 gap-20">
                         <div class="flex items-center gap-2 flex-row">
                             <i class="fa-solid fa-screwdriver-wrench text-lg text-brancoPrincipal"></i>
                             <span class="text-lg text-brancoPrincipal font-inter">Ferramentas</span>
