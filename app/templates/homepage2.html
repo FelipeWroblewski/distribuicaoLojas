@@ -4,11 +4,64 @@
 
 {% include 'navbar.html' %}
 
-    <div class="h-screen w-full bg-brancoCinza flex items-center justify-center">
-        <img src="{{ url_for('static', filename='imgs/techpreto.png') }}" alt="Logo" class="w-6/12">
+<!-- Container principal -->
+<div class="flex flex-col items-center justify-center w-full h-screen bg-gray-100">
+
+  <!-- Logo central -->
+  <div class="mt-12">
+    <img src="{{ url_for('static', filename='img/logo_livetech.png') }}" alt="Logo LiveTech" class="w-64 mx-auto">
+  </div>
+
+  <!-- Cards de resumo -->
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mt-12 w-10/12">
+    <div class="bg-white rounded-2xl shadow p-6 text-center hover:scale-105 transition">
+      <h2 class="text-3xl font-bold text-gray-800">12</h2>
+      <p class="text-gray-500 mt-1">Esquemas</p>
     </div>
+    <div class="bg-white rounded-2xl shadow p-6 text-center hover:scale-105 transition">
+      <h2 class="text-3xl font-bold text-gray-800">{{qtdTabelas}}</h2>
+      <p class="text-gray-500 mt-1">Tabelas</p>
+    </div>
+    <div class="bg-white rounded-2xl shadow p-6 text-center hover:scale-105 transition">
+      <h2 class="text-3xl font-bold text-gray-800">{{qtdColunas}}</h2>
+      <p class="text-gray-500 mt-1">Colunas</p>
+    </div>
+    <div class="bg-white rounded-2xl shadow p-6 text-center hover:scale-105 transition">
+      <h2 class="text-lg font-bold text-gray-800">10/10/2025</h2>
+      <p class="text-gray-500 mt-1">Última atualização</p>
+    </div>
+  </div>
 
-    
+    <figure class="highcharts-figure">
+        <div id="container"></div>
+            <p class="highcharts-description">
+            
+        </p>
+    </figure>
 
+  <!-- Últimas atualizações -->
+  <div class="w-10/12 mt-6 bg-white rounded-2xl shadow p-6">
+    <h2 class="text-xl font-bold text-gray-700 mb-4">📅 Últimas Atualizações</h2>
+    <!-- {% if atualizacoes %} -->
+      <ul class="divide-y divide-gray-200">
+        <!-- {% for item in atualizacoes %} -->
+          <li class="py-3 flex justify-between items-center">
+            <span class="text-gray-800 font-medium">{{ tabela.nome_tabela }}</span>
+            <span class="text-gray-500 text-sm">12/10/2025</span>
+          </li>
+        <!-- {% endfor %} -->
+      </ul>
+    <!-- {% else %} -->
+      <p class="text-gray-500">Nenhuma atualização recente encontrada.</p>
+    <!-- {% endif %} -->
+  </div>
+
+  <!-- Rodapé -->
+  <footer class="mt-10 mb-6 text-gray-400 text-sm">
+    © {{ current_year }} Live!Tech DW Docs — Todos os direitos reservados.
+  </footer>
+
+</div>
 
 {% endblock %}
+

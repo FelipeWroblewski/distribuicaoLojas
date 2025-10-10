@@ -55,6 +55,12 @@ class Tabela(db.Model):
 
     def __repr__(self):
         return f"Tabela('{self.nome_tabela}')"
+    
+    def contarTabelas():
+        return Tabela.query.count()
+    
+    # def contarEsquemas(esquema):
+    #     return esquema.query.count()
 
 
 class Colunas(db.Model):
@@ -64,3 +70,6 @@ class Colunas(db.Model):
 
     tabela_id = db.Column(db.Integer, db.ForeignKey('tabela.id', name="fk_colunas_tabela"), nullable=False)
     tabela = db.relationship('Tabela', back_populates='colunas')
+
+    def contarColunas():
+        return Colunas.query.count()

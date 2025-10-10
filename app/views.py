@@ -74,7 +74,10 @@ def logout():
 @app.route('/home/')
 @login_required
 def home():
-    return render_template('homepage2.html')
+    
+    qtdTabelas = Tabela.contarTabelas()
+    qtdColunas = Colunas.contarColunas()
+    return render_template('homepage2.html', qtdTabelas=qtdTabelas, qtdColunas=qtdColunas)
 
 @app.route('/pesquisar', methods=['GET'])
 @login_required
