@@ -21,8 +21,8 @@ Highcharts.chart('container', {
     },
     xAxis: [{
         categories: [
-            'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-            'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+            'Api', 'Comercial', 'Estoque', 'Eventos', 'Live', 'Marft',
+            'Ppcp', 'Rh', 'Rh_sci', 'Suprimentos', 'Sustentabilidade', 'Ti'
         ],
         crosshair: true
     }],
@@ -31,13 +31,13 @@ Highcharts.chart('container', {
             format: '{value}°C'
         },
         title: {
-            text: 'Temperature'
+            text: 'Tabelas'
         },
         lineColor: '846c5b',
         lineWidth: 2
     }, { // Secondary yAxis
         title: {
-            text: 'Precipitation'
+            text: 'Tamanho em Memória'
         },
         labels: {
             format: '{value} mm'
@@ -54,7 +54,7 @@ Highcharts.chart('container', {
         verticalAlign: 'top'
     },
     series: [{
-        name: 'Precipitation',
+        name: 'Tamanho em Memória',
         type: 'column',
         yAxis: 1,
         data: [
@@ -66,7 +66,7 @@ Highcharts.chart('container', {
         }
 
     }, {
-        name: 'Temperature',
+        name: 'Tabela',
         type: 'spline',
         data: [
             -11.4, -9.5, -14.2, 0.2, 7.0, 12.1, 13.5, 13.6, 8.2,
