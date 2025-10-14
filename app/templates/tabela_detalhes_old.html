@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+
+{% include 'navbar.html' %}
+
+{% block content %}
+
+
+    <div class="h-screen w-full bg-gray-100">
+        <div class="flex justify-center pt-36 pl-20 flex-col">
+            <h1 class="text-4xl font-bold font-inter text-black">{{ tabela.nome_tabela }}</h1>
+            <div class="flex flex-row mt-10 w-1/2 bg-white shadow-xl rounded-lg p-6 border-gray-200 border">
+                <div class="w-1/2 p-2 border-2 border-begeForte bg-begeFraco2 rounded-lg">
+                    <h3 class="text-lg font-inter text-begeForte"><span class="font-bold">Sistema:</span> {{ tabela.origem.sistema_origem }}</h3>
+                    <p class="text-md font-inter text-begeForte"><span class="font-bold">Tela de origem:</span> {{ tabela.origem.tabela_origem }}</p>
+                </div>
+                <div class="w-1/2 ml-20 p-2 border-2 border-begeForte bg-begeFraco2 rounded-lg">
+                    <h3 class="text-lg text-begeForte font-inter"><span class="font-bold">Nome da dag:</span> {{ tabela.dag.dag }}</h3>
+                    <p class="text-md font-inter text-begeForte"><span class="font-bold">Schedule:</span> {{ tabela.dag.schedule }}</p>
+                </div>
+            </div>
+            
+            <h1 class="mt-10 font-inter text-4xl mb-4 text-black">Colunas da Tabela</h1>
+            <div class="bg-white shadow-xl w-1/2 rounded-lg p-6 border border-gray-200">
+                <div class="rounded-md border-2 border-begeForte full shadow-md overflow-hidden">
+                    <table class="w-full divide-y-2 divide-begeForte">
+                        <thead class="bg-begePrincipal">
+                            <tr>
+                                <th class="px-6 py-3 text-left text-xs font-inter text-begeForte uppercase tracking-wider font-bold">Nome da coluna</th>
+                                <th class="px-6 py-3 text-left text-xs font-inter font-bold text-begeForte uppercase tracking-wider">Tipo de dado</th>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-white divide-y  divide-gray-200">
+                            {%for coluna in colunas%}
+                            <tr class="odd:bg-begeFraco2 even:bg-brancoPrincipal">
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-begeForte text-left font-inter ">{{ coluna.nome_coluna }}</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-begeForte text-left font-inter">{{ coluna.tipo_dado }}</td>
+                                {% else %}
+                                    <td>Nenhuma coluna foi encontrada para esta tabela.</td>
+                                {% endfor %}
+                            </tr>   
+                        </tbody>
+                    </table>
+                </div>
+           </div>     
+              
+        </div>
+    </div>
+    
+    
+{% endblock %}

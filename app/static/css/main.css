@@ -570,6 +570,12 @@ video {
   }
 }
 
+@media (min-width: 800px) {
+  .container {
+    max-width: 800px;
+  }
+}
+
 @media (min-width: 1024px) {
   .container {
     max-width: 1024px;
@@ -626,6 +632,10 @@ video {
 
 .z-50 {
   z-index: 50;
+}
+
+.col-span-1 {
+  grid-column: span 1 / span 1;
 }
 
 .m-0 {
@@ -718,6 +728,10 @@ video {
   margin-top: 3rem;
 }
 
+.mt-14 {
+  margin-top: 3.5rem;
+}
+
 .mt-16 {
   margin-top: 4rem;
 }
@@ -790,6 +804,10 @@ video {
   height: 2rem;
 }
 
+.h-80 {
+  height: 20rem;
+}
+
 .h-full {
   height: 100%;
 }
@@ -823,6 +841,10 @@ video {
   width: 91.666667%;
 }
 
+.w-2\/3 {
+  width: 66.666667%;
+}
+
 .w-2\/4 {
   width: 50%;
 }
@@ -837,10 +859,6 @@ video {
 
 .w-28 {
   width: 7rem;
-}
-
-.w-3\/5 {
-  width: 60%;
 }
 
 .w-4 {
@@ -883,12 +901,20 @@ video {
   width: 20rem;
 }
 
+.w-96 {
+  width: 24rem;
+}
+
 .w-full {
   width: 100%;
 }
 
 .w-screen {
   width: 100vw;
+}
+
+.w-3\/5 {
+  width: 60%;
 }
 
 .min-w-fit {
@@ -939,10 +965,6 @@ video {
 
 .place-items-start {
   place-items: start;
-}
-
-.place-items-center {
-  place-items: center;
 }
 
 .items-center {
@@ -1242,6 +1264,11 @@ video {
   padding-bottom: 1rem;
 }
 
+.py-6 {
+  padding-top: 1.5rem;
+  padding-bottom: 1.5rem;
+}
+
 .pl-10 {
   padding-left: 2.5rem;
 }
@@ -1260,6 +1287,10 @@ video {
 
 .pl-8 {
   padding-left: 2rem;
+}
+
+.pt-32 {
+  padding-top: 8rem;
 }
 
 .pt-36 {
@@ -1358,6 +1389,11 @@ video {
 .text-begePrincipal {
   --tw-text-opacity: 1;
   color: rgb(183 166 150 / var(--tw-text-opacity, 1));
+}
+
+.text-black {
+  --tw-text-opacity: 1;
+  color: rgb(0 0 0 / var(--tw-text-opacity, 1));
 }
 
 .text-brancoCinza {
@@ -1641,6 +1677,10 @@ video {
 }
 
 @media (min-width: 768px) {
+  .md\:col-span-1 {
+    grid-column: span 1 / span 1;
+  }
+
   .md\:block {
     display: block;
   }
@@ -1653,12 +1693,34 @@ video {
     display: none;
   }
 
+  .md\:h-40 {
+    height: 10rem;
+  }
+
   .md\:w-3\/5 {
     width: 60%;
   }
 
+  .md\:w-80 {
+    width: 20rem;
+  }
+
+  .md\:grid-cols-2 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
   .md\:place-items-center {
     place-items: center;
+  }
+
+  .md\:overflow-hidden {
+    overflow: hidden;
+  }
+}
+
+@media (min-width: 800px) {
+  .tablet\:h-80 {
+    height: 20rem;
   }
 }
 

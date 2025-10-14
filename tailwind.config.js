@@ -21,6 +21,12 @@ module.exports = {
       fontFamily: {
         inter: ['Inter', 'sans-serif'], // use o nome da fonte que escolheu
       },
+      spacing: {
+        '700': '700px'
+      },
+      screens: {
+        'tablet': '800px'
+      }
     },
   },
   plugins: [],
