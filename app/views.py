@@ -496,54 +496,64 @@ def conectar():
 
 @app.route('/dados_grafico', methods=['GET'])
 def dados_grafico():
-    """
-    Endpoint que executa a query PostgreSQL no banco de dados da empresa
-    (usando o BIND 'postgres_empresa') e retorna os dados em JSON.
-    """
-    
-    # Query PostgreSQL específica 
-    sql_query = text("""
+
+    sql_tamanho = text("""
         SELECT
-            nspname AS "Esquema",
-            -- 1. Valor numérico em Bytes (para a plotagem no gráfico)
-            COALESCE(SUM(pg_total_relation_size(C.oid)), 0) AS "Tamanho_Bytes",
-            -- 2. Valor formatado (para exibição no tooltip e labels)
-            pg_size_pretty(COALESCE(SUM(pg_total_relation_size(C.oid)), 0)) AS "Tamanho_Formatado"
+            nspname AS esquema,
+            COALESCE(SUM(pg_total_relation_size(C.oid)), 0) AS tamanho_bytes,
+            pg_size_pretty(COALESCE(SUM(pg_total_relation_size(C.oid)), 0)) AS tamanho_Formatado
         FROM pg_class C
             LEFT JOIN pg_namespace n
                 ON n.oid = C.relnamespace
-        WHERE nspname NOT IN ('pg_catalog', 'information_schema')
+        WHERE nspname NOT IN ('pg_catalog', 'pg_toast', 'information_schema')
         GROUP BY nspname
-        ORDER BY "Tamanho_Bytes" DESC;
+          ORDER BY nspname ASC;
+    """)
+
+    sql_quantidade = text("""
+        SELECT
+            n.nspname AS esquema,
+            COUNT(c.relname) AS quantidade_tabelas
+        FROM
+            pg_class c
+        JOIN
+            pg_namespace n ON n.oid = c.relnamespace
+        WHERE
+            c.relkind IN ('r')
+            AND n.nspname NOT LIKE 'pg\_%' ESCAPE '\'
+            AND n.nspname <> 'information_schema'
+            AND n.nspname NOT IN ('pg_catalog', 'pg_toast', 'information_schema')
+        GROUP BY
+            n.nspname
+        ORDER BY n.nspname ASC; 
     """)
     
     try:
-        # OBTEMOS A ENGINE (CONEXÃO) ESPECÍFICA DO POSTGRESQL:
         postgres_engine = db.get_engine(bind='postgres_empresa')
         
-        # Abrimos uma conexão e executamos a query nela.
         with postgres_engine.connect() as connection:
-            resultado = connection.execute(sql_query) # A query é executada no Postgres
+
+            res_tamanho = connection.execute(sql_tamanho) 
+            df_tamanho = pd.DataFrame(res_tamanho.fetchall(), columns=res_tamanho.keys())
+            
+            res_quantidade = connection.execute(sql_quantidade)
+            df_quantidade = pd.DataFrame(res_quantidade.fetchall(), columns=res_quantidade.keys())
+
+            df_tamanho = df_tamanho.set_index('esquema')
+            df_quantidade = df_quantidade.set_index('esquema')      
+
+            df_final = df_tamanho.join(df_quantidade, how='outer').fillna(0)  
+
+            df_final = df_final.reset_index()
         
-            # Converte o resultado para DataFrame do Pandas
-            df = pd.DataFrame(resultado.fetchall(), columns=resultado.keys())
-            
-            # 🚨 CORREÇÃO: Converte a coluna Decimal (Bytes) para inteiro nativo do Python/Pandas. 
-            # O Highcharts usará este valor para o posicionamento da coluna.
-            df['Tamanho_Bytes'] = df['Tamanho_Bytes'].astype(int)
-    
-            # Converte para lista de dicionários
-            dados_json = df.to_dict(orient='records')
-            
-            # A linha de debug deve mostrar o valor numérico e o formatado
-            print(f"Dados enviados ao Frontend (Limpos): {dados_json}")
-            
-            return jsonify(dados_json)
+            df_final['tamanho_bytes'] = df_final['tamanho_bytes'].astype(int)
+            df_final['quantidade_tabelas'] = df_final['quantidade_tabelas'].astype(int)
+                        
+            dados_grafico_json = df_final.to_dict(orient='records')
+        
+        return jsonify(dados_grafico_json)
 
     except Exception as e:
-        # Imprime o traceback completo do erro de DB da empresa
-        print(f"ERRO CRÍTICO NO BACKEND (PostgreSQL Connection/Query): {e}")
-        # Retorna um 500 para o frontend
         return jsonify({"erro": f"Falha na conexão ao DB da empresa (bind). Detalhes: {str(e)}"}), 500
 
 def le_arquivo_csv(caminho_arquivo):
