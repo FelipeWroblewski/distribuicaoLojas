@@ -7,7 +7,7 @@
 
     <div class="h-screen w-full bg-gray-100">
         <div class="pt-32">
-           <h1 class=" pl-5 text-4xl font-bold font-inter text-black">{{ tabela.nome_tabela }}</h1> 
+           <h1 class="w-4/5 mx-auto text-start text-4xl font-bold font-inter text-black">{{ tabela.nome_tabela }}</h1> 
            <div class="grid grid-cols-1 md:grid-cols-2 gap-20 mt-14 w-4/5 mx-auto bg-white shadow-xl h-80 rounded-lg py-6 
             border-gray-200 border md:w-3/5 md:h-40">
                 <div class="grid col-span-1 md:col-span-1 w-2/3 md:w-80 mx-auto bg-begePrincipal border-begeForte rounded-lg p-4">
@@ -20,7 +20,36 @@
                 </div>
            </div>
         </div>
+
+        <h1 class="mt-10 w-4/5 mx-auto text-start font-inter text-4xl mb-4 text-black">Colunas da Tabela</h1>
+            <div class="bg-white shadow-xl w-4/5 mx-auto rounded-lg p-6 border border-gray-200">
+                <div class="rounded-md border-2 border-begeForte full shadow-md overflow-hidden">
+                    <table class="w-full divide-y-2 divide-begeForte">
+                        <thead class="bg-begePrincipal">
+                            <tr>
+                                <th class="px-6 py-3 text-left text-xs font-inter text-begeForte uppercase tracking-wider font-bold">Nome da coluna</th>
+                                <th class="px-6 py-3 text-left text-xs font-inter font-bold text-begeForte uppercase tracking-wider">Tipo de dado</th>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-white divide-y  divide-gray-200">
+                            {%for coluna in colunas%}
+                            <tr class="odd:bg-begeFraco2 even:bg-brancoPrincipal">
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-begeForte text-left font-inter ">{{ coluna.nome_coluna }}</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-begeForte text-left font-inter">{{ coluna.tipo_dado }}</td>
+                                {% else %}
+                                    <td>Nenhuma coluna foi encontrada para esta tabela.</td>
+                                {% endfor %}
+                            </tr>   
+                        </tbody>
+                    </table>
+                </div>
+           </div>     
+              
+        </div>
     </div>
+    </div>
+
+    
     
     
 {% endblock %}
