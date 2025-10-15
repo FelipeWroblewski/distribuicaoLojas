@@ -1061,6 +1061,10 @@ video {
   overflow-x: auto;
 }
 
+.overflow-y-auto {
+  overflow-y: auto;
+}
+
 .overflow-x-hidden {
   overflow-x: hidden;
 }
@@ -1617,6 +1621,33 @@ video {
 .before\:h-\[calc\(90\%-10px\)\]::before {
   content: var(--tw-content);
   height: calc(90% - 10px);
+}
+
+.before\:h-fit::before {
+  content: var(--tw-content);
+  height: -moz-fit-content;
+  height: fit-content;
+}
+
+.before\:h-full::before {
+  content: var(--tw-content);
+  height: 100%;
+}
+
+.before\:max-h-screen::before {
+  content: var(--tw-content);
+  max-height: 100vh;
+}
+
+.before\:max-h-fit::before {
+  content: var(--tw-content);
+  max-height: -moz-fit-content;
+  max-height: fit-content;
+}
+
+.before\:min-h-screen::before {
+  content: var(--tw-content);
+  min-height: 100vh;
 }
 
 .before\:w-\[20px\]::before {
