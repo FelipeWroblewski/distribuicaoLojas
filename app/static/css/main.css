@@ -901,20 +901,12 @@ video {
   width: 20rem;
 }
 
-.w-96 {
-  width: 24rem;
-}
-
 .w-full {
   width: 100%;
 }
 
 .w-screen {
   width: 100vw;
-}
-
-.w-3\/5 {
-  width: 60%;
 }
 
 .min-w-fit {
@@ -1307,6 +1299,10 @@ video {
 
 .text-center {
   text-align: center;
+}
+
+.text-start {
+  text-align: start;
 }
 
 .font-inter {
@@ -1711,16 +1707,6 @@ video {
 
   .md\:place-items-center {
     place-items: center;
-  }
-
-  .md\:overflow-hidden {
-    overflow: hidden;
-  }
-}
-
-@media (min-width: 800px) {
-  .tablet\:h-80 {
-    height: 20rem;
   }
 }
 
