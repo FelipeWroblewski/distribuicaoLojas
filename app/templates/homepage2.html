@@ -5,15 +5,10 @@
 {% include 'navbar.html' %}
 
 <!-- Container principal -->
-<div class="flex flex-col items-center justify-center w-full h-screen bg-gray-100">
-
-  <!-- Logo central -->
-  <div class="mt-12">
-    <img src="{{ url_for('static', filename='img/logo_livetech.png') }}" alt="Logo LiveTech" class="w-64 mx-auto">
-  </div>
+<div class="flex flex-col items-center w-full min-h-screen bg-gray-100 pt-16 overflow-x-hidden">
 
   <!-- Cards de resumo -->
-  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mt-12 w-10/12">
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mt-10 w-10/12">
     <div class="bg-white rounded-2xl shadow p-6 text-center hover:scale-105 transition">
       <h2 class="text-3xl font-bold text-gray-800">12</h2>
       <p class="text-gray-500 mt-1">Esquemas</p>
@@ -33,7 +28,7 @@
   </div>
 
     <figure class="highcharts-figure">
-        <div id="container"></div>
+        <div id="container" class="hidden md:block"></div>
             <p class="highcharts-description"></p>
     </figure>
 
