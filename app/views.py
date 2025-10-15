@@ -75,6 +75,33 @@ def logout():
 @login_required
 def home():
 
+    sql_ultimas_updates = text("""
+        SELECT
+            n.nspname AS esquema,
+            c.relname AS nome_tabela,
+            -- Calcula a data mais recente de qualquer atividade de manutenção.
+            GREATEST(
+                stat.last_vacuum, 
+                stat.last_analyze, 
+                stat.last_autovacuum, 
+                stat.last_autoanalyze
+            ) AS ultima_atividade_tabela,
+            -- Mostra o número de tuplas (linhas) inseridas desde a última coleta de estatísticas
+            stat.n_tup_ins AS tuplas_inseridas
+        FROM
+            pg_stat_all_tables stat
+        JOIN
+            pg_class c ON c.oid = stat.relid
+        JOIN
+            pg_namespace n ON n.oid = c.relnamespace
+        WHERE
+            c.relkind IN ('r') -- Apenas tabelas reais
+            AND n.nspname NOT IN ('pg_catalog', 'information_schema', 'pg_toast') -- Exclui esquemas do sistema
+        ORDER BY
+            ultima_atividade_tabela DESC -- Ordena da mais recente para a mais antiga
+        LIMIT 10; -- Limita a, por exemplo, as 10 atualizações mais recentes
+    """)
+
     sql_data_atualizacao = text("""
         SELECT
             TO_CHAR(MAX(ultima_atividade), 'DD/MM/YYYY HH24:MI:SS') AS ultima_atualizacao_dw_formatada
@@ -126,6 +153,20 @@ def home():
             res_quantidade = connection.execute(sql_quantidade)
             df_quantidade = pd.DataFrame(res_quantidade.fetchall(), columns=res_quantidade.keys())
 
+            res_updates = connection.execute(sql_ultimas_updates)
+            df_updates = pd.DataFrame(res_updates.fetchall(), columns=res_updates.keys())
+
+            if 'ultima_atividade_tabela' in df_updates.columns:
+                df_updates['ultima_atividade_tabela'] = pd.to_datetime(df_updates['ultima_atividade_tabela'])
+                
+                df_updates['ultima_atividade_tabela'] = df_updates['ultima_atividade_tabela'].fillna('Sem data')
+                
+                df_updates['ultima_atividade_tabela'] = df_updates['ultima_atividade_tabela'].apply(
+                    lambda x: x.strftime('%d/%m/%Y %H:%M:%S') if pd.notnull(x) and x != 'Sem data' else 'Sem data'
+                )
+
+            logs_atualizacao = df_updates.to_dict('records') 
+
             res_atualizacao = connection.execute(sql_data_atualizacao)
 
             df_quantidade = df_quantidade.set_index('esquema')  
@@ -144,7 +185,7 @@ def home():
         return jsonify({"erro": f"Falha na conexão ao DB da empresa (bind). Detalhes: {str(e)}"}), 500
 
     
-    return render_template('homepage2.html', numero_tabelas=numero_tabelas, numero_esquemas=numero_esquemas, ultima_atualizacao=ultima_atualizacao_formatada)
+    return render_template('homepage2.html', numero_tabelas=numero_tabelas, numero_esquemas=numero_esquemas, ultima_atualizacao=ultima_atualizacao_formatada, logs_atualizacao=logs_atualizacao)
 
 @app.route('/pesquisar', methods=['GET'])
 @login_required
