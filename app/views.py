@@ -74,10 +74,77 @@ def logout():
 @app.route('/home/')
 @login_required
 def home():
+
+    sql_data_atualizacao = text("""
+        SELECT
+            TO_CHAR(MAX(ultima_atividade), 'DD/MM/YYYY HH24:MI:SS') AS ultima_atualizacao_dw_formatada
+        FROM
+            (
+                SELECT
+                    GREATEST(
+                        stat.last_vacuum, 
+                        stat.last_analyze,
+                        stat.last_autovacuum,
+                        stat.last_autoanalyze,
+                        NOW()
+                    ) AS ultima_atividade
+                FROM
+                    pg_stat_all_tables stat
+                JOIN
+                    pg_class c ON c.oid = stat.relid
+                JOIN
+                    pg_namespace n ON n.oid = c.relnamespace
+                WHERE
+                    c.relkind IN ('r') 
+                    AND n.nspname NOT IN ('pg_catalog', 'information_schema', 'pg_toast')
+            ) AS subquery;
+    """)
+
+    sql_quantidade = text("""
+        SELECT
+            n.nspname AS esquema,
+            COUNT(c.relname) AS quantidade_tabelas
+        FROM
+            pg_class c
+        JOIN
+            pg_namespace n ON n.oid = c.relnamespace
+        WHERE
+            c.relkind IN ('r')
+            AND n.nspname NOT LIKE 'pg\_%' ESCAPE '\'
+            AND n.nspname <> 'information_schema'
+            AND n.nspname NOT IN ('pg_catalog', 'pg_toast', 'information_schema')
+        GROUP BY
+            n.nspname
+        ORDER BY n.nspname ASC; 
+    """)
+
+    try:
+        postgres_engine = db.get_engine(bind='postgres_empresa')
+        
+        with postgres_engine.connect() as connection:
+            
+            res_quantidade = connection.execute(sql_quantidade)
+            df_quantidade = pd.DataFrame(res_quantidade.fetchall(), columns=res_quantidade.keys())
+
+            res_atualizacao = connection.execute(sql_data_atualizacao)
+
+            df_quantidade = df_quantidade.set_index('esquema')  
+
+            ultima_atualizacao_formatada = res_atualizacao.scalar_one_or_none()
+
+            if ultima_atualizacao_formatada is None:
+                ultima_atualizacao_formatada = "N/A"
+
+            numero_esquemas = len(df_quantidade)
+            numero_tabelas = df_quantidade['quantidade_tabelas'].sum()
+
+            df_quantidade = df_quantidade.reset_index()
+                            
+    except Exception as e:
+        return jsonify({"erro": f"Falha na conexão ao DB da empresa (bind). Detalhes: {str(e)}"}), 500
+
     
-    qtdTabelas = Tabela.contarTabelas()
-    qtdColunas = Colunas.contarColunas()
-    return render_template('homepage2.html', qtdTabelas=qtdTabelas, qtdColunas=qtdColunas)
+    return render_template('homepage2.html', numero_tabelas=numero_tabelas, numero_esquemas=numero_esquemas, ultima_atualizacao=ultima_atualizacao_formatada)
 
 @app.route('/pesquisar', methods=['GET'])
 @login_required
@@ -543,6 +610,8 @@ def dados_grafico():
             df_quantidade = df_quantidade.set_index('esquema')      
 
             df_final = df_tamanho.join(df_quantidade, how='outer').fillna(0)  
+
+            numero_esquemas = len(df_final)
 
             df_final = df_final.reset_index()
         

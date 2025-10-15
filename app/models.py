@@ -56,9 +56,6 @@ class Tabela(db.Model):
     def __repr__(self):
         return f"Tabela('{self.nome_tabela}')"
     
-    def contarTabelas():
-        return Tabela.query.count()
-    
     # def contarEsquemas(esquema):
     #     return esquema.query.count()
 
