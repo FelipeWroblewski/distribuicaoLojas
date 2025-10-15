@@ -5,25 +5,30 @@
 {% block content %}
 
 
-    <div class="h-screen w-full bg-gray-100">
+    <div class="min-h-screen w-full bg-gray-100 pb-10 px-4 md:px-6"> 
         <div class="pt-32">
-           <h1 class="w-4/5 mx-auto text-start text-4xl font-bold font-inter text-black">{{ tabela.nome_tabela }}</h1> 
-           <div class="grid grid-cols-1 md:grid-cols-2 gap-20 mt-14 w-4/5 mx-auto bg-white shadow-xl h-80 rounded-lg py-6 
-            border-gray-200 border md:w-3/5 md:h-40">
-                <div class="grid col-span-1 md:col-span-1 w-2/3 md:w-80 mx-auto bg-begePrincipal border-begeForte rounded-lg p-4">
+            
+            <h1 class="w-4/5 mx-auto text-start text-4xl font-bold font-inter text-black">{{ tabela.nome_tabela }}</h1> 
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-14 w-4/5  mx-auto bg-white shadow-xl h-auto rounded-lg 
+                py-6 px-4 md:px-6 border border-gray-200">
+                
+                <div class="grid col-span-1 md:col-span-1 w-full bg-begePrincipal border-2 border-begeForte rounded-lg p-4">
                     <h3 class="text-lg font-inter text-begeForte"><span class="font-bold">Sistema:</span> {{ tabela.origem.sistema_origem }}</h3>
                     <p class="text-md font-inter text-begeForte"><span class="font-bold">Tela de origem:</span> {{ tabela.origem.tabela_origem }}</p>
                 </div>
-                <div class="grid col-span-1 md:col-span-1 w-2/3 md:w-80 mx-auto bg-begePrincipal border-begeForte rounded-lg p-4">
+                
+                <div class="grid col-span-1 md:col-span-1 w-full bg-begePrincipal border-2 border-begeForte rounded-lg p-4">
                     <h3 class="text-lg text-begeForte font-inter"><span class="font-bold">Nome da dag:</span> {{ tabela.dag.dag }}</h3>
                     <p class="text-md font-inter text-begeForte"><span class="font-bold">Schedule:</span> {{ tabela.dag.schedule }}</p>
                 </div>
-           </div>
+                
+            </div>
         </div>
 
-        <h1 class="mt-10 w-4/5 mx-auto text-start font-inter text-4xl mb-4 text-black">Colunas da Tabela</h1>
+        <h1 class="mt-10 w-4/5 mx-auto text-start font-inter text-4xl text-black mb-5">Colunas da Tabela</h1>
             <div class="bg-white shadow-xl w-4/5 mx-auto rounded-lg p-6 border border-gray-200">
-                <div class="rounded-md border-2 border-begeForte full shadow-md overflow-hidden">
+                <div class="rounded-md border-2 border-begeForte full shadow-md overflow-x-auto  mb-5">
                     <table class="w-full divide-y-2 divide-begeForte">
                         <thead class="bg-begePrincipal">
                             <tr>
@@ -43,13 +48,9 @@
                         </tbody>
                     </table>
                 </div>
-           </div>     
-              
+           </div>            
         </div>
-    </div>
-    </div>
-
-    
+</div>
     
     
 {% endblock %}
