@@ -5,20 +5,20 @@
 {% block content %}
 
 
-    <div class="min-h-screen w-full bg-gray-100 pb-10 px-4 md:px-6"> 
+    <div class="min-h-screen w-full bg-gray-100 dark:bg-[#1a1a1a] pb-10 px-4 md:px-6"> 
         <div class="pt-32">
             
-            <h1 class="w-4/5 mx-auto text-start text-4xl font-bold font-inter text-black">{{ tabela.nome_tabela }}</h1> 
+            <h1 class="w-4/5 mx-auto text-start text-4xl font-bold font-inter text-black dark:text-[#F5F2EB]">{{ tabela.nome_tabela }}</h1> 
             
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-14 w-4/5  mx-auto bg-white shadow-xl h-auto rounded-lg 
-                py-6 px-4 md:px-6 border border-gray-200">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-14 w-4/5  mx-auto bg-white dark:bg-[#22211D] shadow-xl h-auto rounded-lg 
+                py-6 px-4 md:px-6 border border-gray-200 dark:border-gray-800 dark:border-none">
                 
-                <div class="grid col-span-1 md:col-span-1 w-full bg-begePrincipal border-2 border-begeForte rounded-lg p-4">
+                <div class="grid col-span-1 md:col-span-1 w-full bg-begePrincipal dark:bg-[#D6C0A4] border-2 border-begeForte rounded-lg p-4">
                     <h3 class="text-lg font-inter text-begeForte"><span class="font-bold">Sistema:</span> {{ tabela.origem.sistema_origem }}</h3>
                     <p class="text-md font-inter text-begeForte"><span class="font-bold">Tela de origem:</span> {{ tabela.origem.tabela_origem }}</p>
                 </div>
                 
-                <div class="grid col-span-1 md:col-span-1 w-full bg-begePrincipal border-2 border-begeForte rounded-lg p-4">
+                <div class="grid col-span-1 md:col-span-1 w-full bg-begePrincipal dark:bg-[#D6C0A4] border-2 border-begeForte rounded-lg p-4">
                     <h3 class="text-lg text-begeForte font-inter"><span class="font-bold">Nome da dag:</span> {{ tabela.dag.dag }}</h3>
                     <p class="text-md font-inter text-begeForte"><span class="font-bold">Schedule:</span> {{ tabela.dag.schedule }}</p>
                 </div>
@@ -26,11 +26,11 @@
             </div>
         </div>
 
-        <h1 class="mt-10 w-4/5 mx-auto text-start font-inter text-4xl text-black mb-5">Colunas da Tabela</h1>
-            <div class="bg-white shadow-xl w-4/5 mx-auto rounded-lg p-6 border border-gray-200">
+        <h1 class="mt-10 w-4/5 mx-auto text-start font-inter text-4xl text-black dark:text-[#F5F2EB] mb-5">Colunas da Tabela</h1>
+            <div class="bg-white dark:bg-[#22211D] shadow-xl w-4/5 mx-auto rounded-lg p-6 border border-gray-200 dark:border-gray-800 dark:border-none">
                 <div class="rounded-md border-2 border-begeForte full shadow-md overflow-x-auto  mb-5">
                     <table class="w-full divide-y-2 divide-begeForte">
-                        <thead class="bg-begePrincipal">
+                        <thead class="bg-begePrincipal dark:bg-[#D6C0A4]">
                             <tr>
                                 <th class="px-6 py-3 text-left text-xs font-inter text-begeForte uppercase tracking-wider font-bold">Nome da coluna</th>
                                 <th class="px-6 py-3 text-left text-xs font-inter font-bold text-begeForte uppercase tracking-wider">Tipo de dado</th>

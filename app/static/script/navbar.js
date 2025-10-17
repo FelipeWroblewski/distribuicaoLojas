@@ -5,9 +5,21 @@ const content = document.getElementById("content");
 const btn = document.querySelector('#dark-mode');
 const html = document.querySelector('html');
 
+// Verifica se o modo escuro estava ativo antes
+if (localStorage.getItem('theme') === 'dark') {
+    html.classList.add('dark');
+}
+
 btn.addEventListener('click', function() {
     html.classList.toggle('dark');
+
+    if (html.classList.contains('dark')) {
+        localStorage.setItem('theme', 'dark');
+    } else {
+        localStorage.setItem('theme', 'light');
+    }
 });
+
 
 function toogleSidebar() {
     const isOpen = !sidebar.classList.contains('-translate-x-full');

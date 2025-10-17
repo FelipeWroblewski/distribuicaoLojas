@@ -10,63 +10,102 @@ function formatBytes(bytes, decimals = 2) {
     return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
 }
 
-document.addEventListener('DOMContentLoaded', function () {
 const flaskDataUrl = '/dados_grafico';
 
-const darkModeToggle = document.getElementById('dark-mode');
+const html = document.querySelector('html');
 
-darkModeToggle.addEventListener('click', () => {
-  const isDark = document.documentElement.classList.contains('dark');
-    aplicarTemaHighcharts(isDark);
-});
-
-function aplicarTemaHighcharts(isDark) {
-  if (isDark) {
-    Highcharts.setOptions({
-      chart: {
-        backgroundColor: '#22211D',
-        style: { color: '#E3CFAA' }
-      },
-      title: { style: { color: '#E3CFAA' } },
-      xAxis: {
-        labels: { style: { color: '#E3CFAA' } },
-        lineColor: '#CDB58C',
-        tickColor: '#CDB58C'
-      },
-      yAxis: {
-        labels: { style: { color: '#D6C0A4' } },
-        title: { style: { color: '#C2A98B' } },
-        gridLineColor: '#2A2926'
-      },
-      legend: { itemStyle: { color: '#D6C0A4' } },
-      tooltip: { backgroundColor: '#2C2B28', style: { color: '#E3CFAA' } }
-    });
-  } else {
-    Highcharts.setOptions({
-      chart: { backgroundColor: '#FFFFFF' },
-      title: { style: { color: '#000000' } },
-      xAxis: {
-        labels: { style: { color: '#000000' } },
-        lineColor: '#846C5B',
-        tickColor: '#846C5B'
-      },
-      yAxis: {
-        labels: { style: { color: '#000000' } },
-        title: { style: { color: '#000000' } },
-        gridLineColor: '#e6e6e6'
-      },
-      legend: { itemStyle: { color: '#000000' } },
-      tooltip: { backgroundColor: '#F9F9F9', style: { color: '#000000' } }
-    });
-  }
-
-  // Re-renderiza o gráfico com o novo tema (sem refazer fetch)
-  if (window.graficoAtual && window.graficoAtual.userOptions) {
-    const chartOptions = window.graficoAtual.userOptions;
-    window.graficoAtual.destroy(); // Remove o gráfico atual
-    window.graficoAtual = Highcharts.chart('container', chartOptions); // Cria novamente
-  }
+// 🔹 Recupera o tema salvo ao carregar a página
+const temaSalvo = localStorage.getItem('theme');
+if (temaSalvo === 'dark') {
+    html.classList.add('dark');
+} else {
+    html.classList.remove('dark');
 }
+
+document.addEventListener('DOMContentLoaded', function () {
+
+// Agora temos certeza de que estes elementos existem e são encontrados:
+    const btn = document.querySelector('#dark-mode');
+    const html = document.querySelector('html');
+
+    // --- 1. FUNÇÃO PARA APLICAR O TEMA HIGHCHARTS ---
+    function aplicarTemaHighcharts(isDark) {
+        if (isDark) {
+            Highcharts.setOptions({
+                 chart: {
+                    backgroundColor: '#22211D',
+                    style: { color: '#E3CFAA' }
+                  },
+                  title: { style: { color: '#E3CFAA' } },
+                  xAxis: {
+                    labels: { style: { color: '#E3CFAA' } },
+                    lineColor: '#CDB58C',
+                    tickColor: '#CDB58C'
+                  },
+                  yAxis: {
+                    labels: { style: { color: '#D6C0A4' } },
+                    title: { style: { color: '#C2A98B' } },
+                    gridLineColor: '#2A2926'
+                  },
+                  legend: { itemStyle: { color: '#D6C0A4' } },
+                  tooltip: { backgroundColor: '#2C2B28', style: { color: '#E3CFAA' } }
+            });
+        } else {
+            Highcharts.setOptions({
+                chart: { backgroundColor: '#FFFFFF' },
+                title: { style: { color: '#000000' } },
+                xAxis: {
+                    labels: { style: { color: '#000000' } },
+                    lineColor: '#846C5B',
+                    tickColor: '#846C5B'
+                },
+                yAxis: {
+                    labels: { style: { color: '#000000' } },
+                    title: { style: { color: '#000000' } },
+                    gridLineColor: '#e6e6e6'
+                },
+                legend: { itemStyle: { color: '#000000' } },
+                tooltip: { backgroundColor: '#F9F9F9', style: { color: '#000000' } }
+            });
+        }
+
+        // Re-renderiza o gráfico com o novo tema
+        if (window.graficoAtual && window.graficoAtual.userOptions) {
+            window.graficoAtual.destroy();
+            window.graficoAtual = Highcharts.chart('container', window.graficoAtual.userOptions); 
+        }
+    }
+
+
+    // --- 2. VERIFICAÇÃO INICIAL (CARREGAMENTO) ---
+    const isDarkInitial = localStorage.getItem('theme') === 'dark';
+
+    if (isDarkInitial) {
+        html.classList.add('dark');
+    }
+
+    // Aplica o tema Highcharts no carregamento
+    aplicarTemaHighcharts(isDarkInitial);
+
+
+    // --- 3. EVENTO DE CLIQUE UNIFICADO ---
+    btn.addEventListener('click', function() {
+        // Alterna a classe (Esta linha é o que faz o modo mudar)
+        html.classList.toggle('dark');
+
+        // Salva o novo estado no localStorage
+        const isDark = html.classList.contains('dark');
+        if (isDark) {
+            localStorage.setItem('theme', 'dark');
+        } else {
+            localStorage.setItem('theme', 'light');
+        }
+        
+        // Aplica o novo tema no Highcharts
+        aplicarTemaHighcharts(isDark);
+    });
+
+});
 
 
 fetch(flaskDataUrl)
@@ -199,5 +238,4 @@ fetch(flaskDataUrl)
     document.getElementById('container').innerHTML =
     '<p style="color: red; text-align: center;">Erro: Não foi possível carregar ou processar os dados.</p>' +
     '<p style="text-align: center;">Detalhe: ' + error.message + '</p>';
-});
 });

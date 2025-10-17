@@ -8,7 +8,7 @@
                     </button>
                     <a href="{{url_for('home')}}" class="decoration-0">
                         <img src="{{url_for('static', filename='imgs/livetech.png')}}" alt="" class="w-40 hidden md:block dark:hidden">
-                        <img src="{{url_for('static', filename='imgs/livetechBlack.png')}}" alt="" class="w-40 hidden dark:block">
+                        <img src="{{url_for('static', filename='imgs/livetechBlack.png')}}" alt="" class="w-40 hidden md:dark:block">
                     </a>
                 </div>
 
@@ -59,19 +59,19 @@
                             
                             <ul class="list-none mt-5 overflow-y-auto">
                                 <li class="ml-5 mb-10 relative font-inter font-light
-                                        before:content-[''] before:absolute before:top-1 before:left-[-20px] before:w-[20px] before:h-[20px] 
+                                        before:content-[''] before:absolute before:top-1 before:left-[-20px] before:w-[20px] before:h-3/4 
                                         before:border-l-2 before:border-b-2 before:border-brancoPrincipal dark:before:border-[#22211D] before:rounded-bl-[10px] before:translate-y-[-50%]">
-                                <a class="ml-5 text-md text-brancoPrincipal" href="{{url_for('distribuicao')}}">Distribuição Lojas</a>
+                                <a class="ml-5 text-md text-brancoPrincipal dark:text-[#22211d]" href="{{url_for('distribuicao')}}">Distribuição Lojas</a>
                                 </li>
                                 <li class="ml-5 mb-10 relative font-inter font-light
                                         before:content-[''] before:absolute before:top-1 before:left-[-20px] before:w-[20px] before:h-[20px] 
                                         before:border-l-2 before:border-b-2 before:border-brancoPrincipal dark:before:border-[#22211D] before:rounded-bl-[10px] before:translate-y-[-50%]">
-                                <a class="ml-5 text-md text-brancoPrincipal" href="{{url_for('distribuicao')}}">Distribuição Lojas</a>
+                                <a class="ml-5 text-md text-brancoPrincipal dark:text-[#22211d]" href="{{url_for('distribuicao')}}">Distribuição Lojas</a>
                                 </li>
                                 <li class="ml-5 relative font-inter font-light
                                         before:content-[''] before:absolute before:top-1 before:left-[-20px] before:w-[20px] before:h-[20px] 
                                         before:border-l-2 before:border-b-2 before:border-brancoPrincipal dark:before:border-[#22211D] before:rounded-bl-[10px] before:translate-y-[-50%]">
-                                <a class="ml-5 text-md text-brancoPrincipal" href="{{url_for('distribuicao')}}">Distribuição Lojas</a>
+                                <a class="ml-5 text-md text-brancoPrincipal dark:text-[#22211d]" href="{{url_for('distribuicao')}}">Distribuição Lojas</a>
                                 </li>
                             </ul>
                         </div>
@@ -91,70 +91,71 @@
                             <i class="fa-solid fa-caret-right text-2xl text-brancoPrincipal dark:text-[#22211D] w-4 h-4 ml-11 transition-transform duration-300 ease-in-out peer-checked:rotate-90"></i>
                         </label>
 
-                        <div class="flex flex-col mt-2 space-y-2 px-4 max-h-0 overflow-hidden
-                                        transition-all duration-300 ease-in-out peer-checked:max-h-[70vh] relative pl-5">
-                            <ul class="list-none mt-5 p-0 pl-6 relative overflow-y-auto
+                        <div class="flex flex-col mt-2 space-y-2 px-4 max-h-0
+                                        transition-all duration-300 ease-in-out peer-checked:max-h-[87%] relative pl-5">
+                            <ul class="list-none mt-5 p-0 pl-6 relative overflow-y-auto lg:mb-[780px]
                                         before:content-[''] before:absolute before:left-3 before:top-0 before:h-full
                                         before:w-[2px] before:bg-brancoPrincipal dark:before:bg-[#22211D] before:rounded-[5px]">
+                                
                                 <li class="ml-2 mb-6 relative font-inter font-light
                                         before:content-[''] before:absolute before:top-1 before:left-[-20px] before:w-[20px] before:h-[20px] 
                                         before:border-l-2 before:border-b-2 before:border-brancoPrincipal dark:before:border-[#22211D] before:rounded-bl-[10px] before:translate-y-[-50%]">
-                                <a class="pl-5 text-md text-brancoPrincipal" href="{{url_for('esquemaApi', nome_esquema='Api')}}">Api</a>
+                                <a class="pl-5 text-md text-brancoPrincipal dark:text-[#22211d]" href="{{url_for('esquemaApi', nome_esquema='Api')}}">Api</a>
                                 </li>
                                 <li class="ml-2 mb-6 relative font-inter font-light
                                         before:content-[''] before:absolute before:top-1 before:left-[-20px] before:w-[20px] before:h-[20px] 
                                         before:border-l-2 before:border-b-2 before:border-brancoPrincipal dark:before:border-[#22211D] before:rounded-bl-[10px] before:translate-y-[-50%]">
-                                <a class="pl-5 text-md text-brancoPrincipal" href="{{url_for('esquemaComercial', nome_esquema='Comercial')}}">Comercial</a>
+                                <a class="pl-5 text-md text-brancoPrincipal dark:text-[#22211d]" href="{{url_for('esquemaComercial', nome_esquema='Comercial')}}">Comercial</a>
                                 </li>
                                 <li class="ml-2 mb-6 relative font-inter font-light
                                         before:content-[''] before:absolute before:top-1 before:left-[-20px] before:w-[20px] before:h-[20px] 
                                         before:border-l-2 before:border-b-2 before:border-brancoPrincipal dark:before:border-[#22211D] before:rounded-bl-[10px] before:translate-y-[-50%]">
-                                <a class="pl-5 text-md text-brancoPrincipal" href="{{url_for('esquemaEstoque', nome_esquema='Estoque')}}">Estoque</a>
+                                <a class="pl-5 text-md text-brancoPrincipal dark:text-[#22211d]" href="{{url_for('esquemaEstoque', nome_esquema='Estoque')}}">Estoque</a>
                                 </li>
                                 <li class="ml-2 mb-6 relative font-inter font-light
                                         before:content-[''] before:absolute before:top-1 before:left-[-20px] before:w-[20px] before:h-[20px] 
                                         before:border-l-2 before:border-b-2 before:border-brancoPrincipal dark:before:border-[#22211D] before:rounded-bl-[10px] before:translate-y-[-50%]">
-                                <a class="pl-5 text-md text-brancoPrincipal" href="{{url_for('esquemaEventos', nome_esquema='Eventos')}}">Eventos</a>
+                                <a class="pl-5 text-md text-brancoPrincipal dark:text-[#22211d]" href="{{url_for('esquemaEventos', nome_esquema='Eventos')}}">Eventos</a>
                                 </li>
                                 <li class="ml-2 mb-6 relative font-inter font-light
                                         before:content-[''] before:absolute before:top-1 before:left-[-20px] before:w-[20px] before:h-[20px] 
                                         before:border-l-2 before:border-b-2 before:border-brancoPrincipal dark:before:border-[#22211D] before:rounded-bl-[10px] before:translate-y-[-50%]">
-                                <a class="pl-5 text-md text-brancoPrincipal" href="{{url_for('esquemaLive', nome_esquema='Live')}}">Live</a>
+                                <a class="pl-5 text-md text-brancoPrincipal dark:text-[#22211d]" href="{{url_for('esquemaLive', nome_esquema='Live')}}">Live</a>
                                 </li>
                                 <li class="ml-2 mb-6 relative font-inter font-light
                                         before:content-[''] before:absolute before:top-1 before:left-[-20px] before:w-[20px] before:h-[20px] 
                                         before:border-l-2 before:border-b-2 before:border-brancoPrincipal dark:before:border-[#22211D] before:rounded-bl-[10px] before:translate-y-[-50%]">
-                                <a class="pl-5 text-md text-brancoPrincipal" href="{{url_for('esquemaMarft', nome_esquema='Marft')}}">Marft</a>
+                                <a class="pl-5 text-md text-brancoPrincipal dark:text-[#22211d]" href="{{url_for('esquemaMarft', nome_esquema='Marft')}}">Marft</a>
                                 </li>
                                 <li class="ml-2 mb-6 relative font-inter font-light
                                         before:content-[''] before:absolute before:top-1 before:left-[-20px] before:w-[20px] before:h-[20px] 
                                         before:border-l-2 before:border-b-2 before:border-brancoPrincipal dark:before:border-[#22211D] before:rounded-bl-[10px] before:translate-y-[-50%]">
-                                <a class="pl-5 text-md text-brancoPrincipal" href="{{url_for('esquemaPpcp', nome_esquema='Ppcp')}}">Ppcp</a>
+                                <a class="pl-5 text-md text-brancoPrincipal dark:text-[#22211d]" href="{{url_for('esquemaPpcp', nome_esquema='Ppcp')}}">Ppcp</a>
                                 </li>
                                 <li class="ml-2 mb-6 relative font-inter font-light
                                         before:content-[''] before:absolute before:top-1 before:left-[-20px] before:w-[20px] before:h-[20px] 
                                         before:border-l-2 before:border-b-2 before:border-brancoPrincipal dark:before:border-[#22211D] before:rounded-bl-[10px] before:translate-y-[-50%]">
-                                <a class="pl-5 text-md text-brancoPrincipal" href="{{url_for('esquemaRh', nome_esquema='Rh')}}">Rh</a>
+                                <a class="pl-5 text-md text-brancoPrincipal dark:text-[#22211d]" href="{{url_for('esquemaRh', nome_esquema='Rh')}}">Rh</a>
                                 </li>
                                 <li class="ml-2 mb-6 relative font-inter font-light
                                         before:content-[''] before:absolute before:top-1 before:left-[-20px] before:w-[20px] before:h-[20px] 
                                         before:border-l-2 before:border-b-2 before:border-brancoPrincipal dark:before:border-[#22211D] before:rounded-bl-[10px] before:translate-y-[-50%]">
-                                <a class="pl-5 text-md text-brancoPrincipal" href="{{url_for('esquemaRh_sci', nome_esquema='Rh_sci')}}">Rh_sci</a>
+                                <a class="pl-5 text-md text-brancoPrincipal dark:text-[#22211d]" href="{{url_for('esquemaRh_sci', nome_esquema='Rh_sci')}}">Rh_sci</a>
                                 </li>
                                 <li class="ml-2 mb-6 relative font-inter font-light
                                         before:content-[''] before:absolute before:top-1 before:left-[-20px] before:w-[20px] before:h-[20px] 
                                         before:border-l-2 before:border-b-2 before:border-brancoPrincipal dark:before:border-[#22211D] before:rounded-bl-[10px] before:translate-y-[-50%]">
-                                <a class="pl-5 text-md text-brancoPrincipal" href="{{url_for('esquemaSuprimentos', nome_esquema='Suprimentos')}}">Suprimentos</a>
+                                <a class="pl-5 text-md text-brancoPrincipal dark:text-[#22211d]" href="{{url_for('esquemaSuprimentos', nome_esquema='Suprimentos')}}">Suprimentos</a>
                                 </li>
                                 <li class="ml-2 mb-6 relative font-inter font-light
                                         before:content-[''] before:absolute before:top-1 before:left-[-20px] before:w-[20px] before:h-[20px] 
                                         before:border-l-2 before:border-b-2 before:border-brancoPrincipal dark:before:border-[#22211D] before:rounded-bl-[10px] before:translate-y-[-50%]">
-                                <a class="pl-5 text-md text-brancoPrincipal" href="{{url_for('esquemaSustentabilidade', nome_esquema='Sustentabilidade')}}">Sustentabilidade</a>
+                                <a class="pl-5 text-md text-brancoPrincipal dark:text-[#22211d]" href="{{url_for('esquemaSustentabilidade', nome_esquema='Sustentabilidade')}}">Sustentabilidade</a>
                                 </li>
-                                <li class="ml-2 mb-6 relative font-inter font-light
-                                        before:content-[''] before:absolute before:top-1 before:left-[-20px] before:w-[20px] before:h-[20px] 
+                                <li class="ml-2 relative font-inter font-light
+                                        before:content-[''] before:absolute before:top-1 pb-5 before:left-[-20px] before:w-[20px] before:h-[20px] 
                                         before:border-l-2 before:border-b-2 before:border-brancoPrincipal dark:before:border-[#22211D] before:rounded-bl-[10px] before:translate-y-[-50%]">
-                                <a class="pl-5 text-md text-brancoPrincipal" href="{{url_for('esquemaTi', nome_esquema='Ti')}}">Ti</a>
+                                <a class="pl-5 text-md text-brancoPrincipal dark:text-[#22211d]" href="{{url_for('esquemaTi', nome_esquema='Ti')}}">Ti</a>
                                 </li>
                             </ul>
                         </div>
