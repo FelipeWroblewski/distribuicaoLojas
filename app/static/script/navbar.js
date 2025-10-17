@@ -2,6 +2,13 @@ const sideBar = document.getElementById('sidebar');
 const toogleBtn = document.getElementById('toogleSidebar');
 const content = document.getElementById("content");
 
+const btn = document.querySelector('#dark-mode');
+const html = document.querySelector('html');
+
+btn.addEventListener('click', function() {
+    html.classList.toggle('dark');
+});
+
 function toogleSidebar() {
     const isOpen = !sidebar.classList.contains('-translate-x-full');
     if (isOpen) {

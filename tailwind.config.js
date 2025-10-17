@@ -1,10 +1,11 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   content: [
-    "./app/templates/**/*.html",   // todos os HTML do Flask
-    "./app/static/scripts/**/*.js", // scripts do static
-    "./app/static/src/**/*.css"     // se usar @apply em CSS
+    "./app/templates/**/*.html",   
+    "./app/static/scripts/**/*.js", 
+    "./app/static/src/**/*.css"     
   ],
+  darkMode: 'class',
   theme: {
     extend: {
       colors: {
@@ -19,7 +20,7 @@ module.exports = {
         cinza: "#ccc",
       },
       fontFamily: {
-        inter: ['Inter', 'sans-serif'], // use o nome da fonte que escolheu
+        inter: ['Inter', 'sans-serif'], 
       },
       spacing: {
         '700': '700px'

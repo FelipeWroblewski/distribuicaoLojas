@@ -13,6 +13,62 @@ function formatBytes(bytes, decimals = 2) {
 document.addEventListener('DOMContentLoaded', function () {
 const flaskDataUrl = '/dados_grafico';
 
+const darkModeToggle = document.getElementById('dark-mode');
+
+darkModeToggle.addEventListener('click', () => {
+  const isDark = document.documentElement.classList.contains('dark');
+    aplicarTemaHighcharts(isDark);
+});
+
+function aplicarTemaHighcharts(isDark) {
+  if (isDark) {
+    Highcharts.setOptions({
+      chart: {
+        backgroundColor: '#22211D',
+        style: { color: '#E3CFAA' }
+      },
+      title: { style: { color: '#E3CFAA' } },
+      xAxis: {
+        labels: { style: { color: '#E3CFAA' } },
+        lineColor: '#CDB58C',
+        tickColor: '#CDB58C'
+      },
+      yAxis: {
+        labels: { style: { color: '#D6C0A4' } },
+        title: { style: { color: '#C2A98B' } },
+        gridLineColor: '#2A2926'
+      },
+      legend: { itemStyle: { color: '#D6C0A4' } },
+      tooltip: { backgroundColor: '#2C2B28', style: { color: '#E3CFAA' } }
+    });
+  } else {
+    Highcharts.setOptions({
+      chart: { backgroundColor: '#FFFFFF' },
+      title: { style: { color: '#000000' } },
+      xAxis: {
+        labels: { style: { color: '#000000' } },
+        lineColor: '#846C5B',
+        tickColor: '#846C5B'
+      },
+      yAxis: {
+        labels: { style: { color: '#000000' } },
+        title: { style: { color: '#000000' } },
+        gridLineColor: '#e6e6e6'
+      },
+      legend: { itemStyle: { color: '#000000' } },
+      tooltip: { backgroundColor: '#F9F9F9', style: { color: '#000000' } }
+    });
+  }
+
+  // Re-renderiza o gráfico com o novo tema (sem refazer fetch)
+  if (window.graficoAtual && window.graficoAtual.userOptions) {
+    const chartOptions = window.graficoAtual.userOptions;
+    window.graficoAtual.destroy(); // Remove o gráfico atual
+    window.graficoAtual = Highcharts.chart('container', chartOptions); // Cria novamente
+  }
+}
+
+
 fetch(flaskDataUrl)
     .then(response => {
         if (!response.ok) {
@@ -52,7 +108,7 @@ fetch(flaskDataUrl)
         dadosTabela.push(valorNumericoTabelas);
     });
 
-    Highcharts.chart('container', {
+    window.graficoAtual = Highcharts.chart('container', {
         colors: ['#b7a696', '#846c5b'],
         chart: { 
             zoomType: 'xy', // Use zoomType ao invés de zooming para compatibilidade e clareza
