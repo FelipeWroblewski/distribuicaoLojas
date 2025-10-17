@@ -12,7 +12,7 @@ function formatBytes(bytes, decimals = 2) {
 
 const flaskDataUrl = '/dados_grafico';
 
-const html = document.querySelector('html');
+html = document.querySelector('html');
 
 // 🔹 Recupera o tema salvo ao carregar a página
 const temaSalvo = localStorage.getItem('theme');
