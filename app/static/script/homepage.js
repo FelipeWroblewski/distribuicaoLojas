@@ -1,110 +1,79 @@
 function formatBytes(bytes, decimals = 2) {
     if (bytes === 0) return '0 Bytes';
-
     const k = 1024;
     const dm = decimals < 0 ? 0 : decimals;
     const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
-
     const i = Math.floor(Math.log(bytes) / Math.log(k));
-
     return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
 }
 
 const flaskDataUrl = '/dados_grafico';
+const htmlElement = document.querySelector('html');
+const isDarkInitial = localStorage.getItem('theme') === 'dark';
 
-html = document.querySelector('html');
 
-// 🔹 Recupera o tema salvo ao carregar a página
-const temaSalvo = localStorage.getItem('theme');
-if (temaSalvo === 'dark') {
-    html.classList.add('dark');
+
+function aplicarTemaHighcharts(isDark) {
+    if (typeof Highcharts === 'undefined') {
+        return; 
+    }
+
+    if (isDark) {
+        Highcharts.setOptions({
+            chart: {
+                backgroundColor: '#22211D',
+                style: { color: '#E3CFAA' }
+            },
+            title: { style: { color: '#E3CFAA' } },
+            xAxis: {
+                labels: { style: { color: '#E3CFAA' } },
+                lineColor: '#CDB58C',
+                tickColor: '#CDB58C'
+            },
+            yAxis: {
+                labels: { style: { color: '#D6C0A4' } },
+                title: { style: { color: '#C2A98B' } },
+                gridLineColor: '#2A2926'
+            },
+            legend: { itemStyle: { color: '#D6C0A4' } },
+            tooltip: { backgroundColor: '#2C2B28', style: { color: '#E3CFAA' } }
+        });
+    } else {
+        Highcharts.setOptions({
+            chart: { backgroundColor: '#FFFFFF' },
+            title: { style: { color: '#000000' } },
+            xAxis: {
+                labels: { style: { color: '#000000' } },
+                lineColor: '#846C5B',
+                tickColor: '#846C5B'
+            },
+            yAxis: {
+                labels: { style: { color: '#000000' } },
+                title: { style: { color: '#000000' } },
+                gridLineColor: '#e6e6e6'
+            },
+            legend: { itemStyle: { color: '#000000' } },
+            tooltip: { backgroundColor: '#F9F9F9', style: { color: '#000000' } }
+        });
+    }
+
+    // Re-renderiza o gráfico com o novo tema
+    if (window.graficoAtual && window.graficoAtual.userOptions) {
+        window.graficoAtual.destroy();
+        window.graficoAtual = Highcharts.chart('container', window.graficoAtual.userOptions); 
+    }
+}
+
+
+// 1.2. APLICA O TEMA DOM NO CARREGAMENTO (IMEDIATAMENTE)
+if (isDarkInitial) {
+    htmlElement.classList.add('dark');
 } else {
-    html.classList.remove('dark');
+    htmlElement.classList.remove('dark');
 }
 
 document.addEventListener('DOMContentLoaded', function () {
-
-// Agora temos certeza de que estes elementos existem e são encontrados:
-    const btn = document.querySelector('#dark-mode');
-    const html = document.querySelector('html');
-
-    // --- 1. FUNÇÃO PARA APLICAR O TEMA HIGHCHARTS ---
-    function aplicarTemaHighcharts(isDark) {
-        if (isDark) {
-            Highcharts.setOptions({
-                 chart: {
-                    backgroundColor: '#22211D',
-                    style: { color: '#E3CFAA' }
-                  },
-                  title: { style: { color: '#E3CFAA' } },
-                  xAxis: {
-                    labels: { style: { color: '#E3CFAA' } },
-                    lineColor: '#CDB58C',
-                    tickColor: '#CDB58C'
-                  },
-                  yAxis: {
-                    labels: { style: { color: '#D6C0A4' } },
-                    title: { style: { color: '#C2A98B' } },
-                    gridLineColor: '#2A2926'
-                  },
-                  legend: { itemStyle: { color: '#D6C0A4' } },
-                  tooltip: { backgroundColor: '#2C2B28', style: { color: '#E3CFAA' } }
-            });
-        } else {
-            Highcharts.setOptions({
-                chart: { backgroundColor: '#FFFFFF' },
-                title: { style: { color: '#000000' } },
-                xAxis: {
-                    labels: { style: { color: '#000000' } },
-                    lineColor: '#846C5B',
-                    tickColor: '#846C5B'
-                },
-                yAxis: {
-                    labels: { style: { color: '#000000' } },
-                    title: { style: { color: '#000000' } },
-                    gridLineColor: '#e6e6e6'
-                },
-                legend: { itemStyle: { color: '#000000' } },
-                tooltip: { backgroundColor: '#F9F9F9', style: { color: '#000000' } }
-            });
-        }
-
-        // Re-renderiza o gráfico com o novo tema
-        if (window.graficoAtual && window.graficoAtual.userOptions) {
-            window.graficoAtual.destroy();
-            window.graficoAtual = Highcharts.chart('container', window.graficoAtual.userOptions); 
-        }
-    }
-
-
-    // --- 2. VERIFICAÇÃO INICIAL (CARREGAMENTO) ---
-    const isDarkInitial = localStorage.getItem('theme') === 'dark';
-
-    if (isDarkInitial) {
-        html.classList.add('dark');
-    }
-
-    // Aplica o tema Highcharts no carregamento
-    aplicarTemaHighcharts(isDarkInitial);
-
-
-    // --- 3. EVENTO DE CLIQUE UNIFICADO ---
-    btn.addEventListener('click', function() {
-        // Alterna a classe (Esta linha é o que faz o modo mudar)
-        html.classList.toggle('dark');
-
-        // Salva o novo estado no localStorage
-        const isDark = html.classList.contains('dark');
-        if (isDark) {
-            localStorage.setItem('theme', 'dark');
-        } else {
-            localStorage.setItem('theme', 'light');
-        }
-        
-        // Aplica o novo tema no Highcharts
-        aplicarTemaHighcharts(isDark);
-    });
-
+     aplicarTemaHighcharts(isDark);
 });
 
 
