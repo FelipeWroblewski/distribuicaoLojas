@@ -1,8 +1,7 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<div class="flex min-h-screen">
-    <!-- Coluna esquerda -->
+<div class="flex h-screen">
     <div class="hidden md:flex bg-begePrincipal w-2/5 flex-col pt-40 items-center">
         <div class="flex m-10 justify-center">
             <img src="{{ url_for('static', filename='imgs/logo_live.png') }}" alt="Logo" class="w-60">
@@ -12,12 +11,13 @@
         <p class="text-brancoPrincipal text-xl flex text-center font-light mt-10">Entre em nosso sistema de distribuição de lojas</p>
     </div>
 
-    <!-- Coluna direita -->
-    <div class="w-3/5 min-h-screen grid place-items-center justify-center bg-brancoCinza">    
-            
+    <div class="w-screen md:w-3/5 min-h-screen grid place-items-start md:place-items-center justify-center bg-brancoCinza">    
+
             <div class="w-80 relative mb-10 bottom-5">
 
-                <form action="" method="POST" class="w-full">
+                <img src="{{ url_for('static', filename='imgs/live-marrom.png') }}" alt="Logo" class="w-60 mx-auto mt-32 md:hidden">
+
+                <form action="" method="POST" class="w-full mt-28">
                     {{form.csrf_token}}
 
                     {{form.email.label(class="text-begePrincipal mb-2 block")}}

@@ -36,6 +36,9 @@ class Origem(db.Model):
 
 
 class Tabela(db.Model):
+
+    __tablename__ = 'tabela'
+
     id = db.Column(db.Integer, primary_key=True)
     nome_tabela = db.Column(db.String, nullable=False)
     descricao_tabela = db.Column(db.String, nullable=True)
@@ -50,6 +53,12 @@ class Tabela(db.Model):
     # Relacionamento com Colunas (uma tabela pode ter várias colunas)
     colunas = db.relationship('Colunas', back_populates='tabela', lazy=True, cascade="all, delete-orphan")
 
+    def __repr__(self):
+        return f"Tabela('{self.nome_tabela}')"
+    
+    # def contarEsquemas(esquema):
+    #     return esquema.query.count()
+
 
 class Colunas(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -58,3 +67,6 @@ class Colunas(db.Model):
 
     tabela_id = db.Column(db.Integer, db.ForeignKey('tabela.id', name="fk_colunas_tabela"), nullable=False)
     tabela = db.relationship('Tabela', back_populates='colunas')
+
+    def contarColunas():
+        return Colunas.query.count()

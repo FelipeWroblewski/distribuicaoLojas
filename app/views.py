@@ -8,7 +8,7 @@ from datetime import datetime
 from flask_socketio import join_room, leave_room, emit
 from fpdf import FPDF
 from sqlalchemy.orm import joinedload
-from sqlalchemy import desc
+from sqlalchemy import desc, text
 from werkzeug.utils import secure_filename
 import os
 import re
@@ -74,7 +74,158 @@ def logout():
 @app.route('/home/')
 @login_required
 def home():
-    return render_template('homepage2.html')
+
+    sql_ultimas_updates = text("""
+        SELECT
+            n.nspname AS esquema,
+            c.relname AS nome_tabela,
+            -- Calcula a data mais recente de qualquer atividade de manutenção.
+            GREATEST(
+                stat.last_vacuum, 
+                stat.last_analyze, 
+                stat.last_autovacuum, 
+                stat.last_autoanalyze
+            ) AS ultima_atividade_tabela,
+            -- Mostra o número de tuplas (linhas) inseridas desde a última coleta de estatísticas
+            stat.n_tup_ins AS tuplas_inseridas
+        FROM
+            pg_stat_all_tables stat
+        JOIN
+            pg_class c ON c.oid = stat.relid
+        JOIN
+            pg_namespace n ON n.oid = c.relnamespace
+        WHERE
+            c.relkind IN ('r') -- Apenas tabelas reais
+            AND n.nspname NOT IN ('pg_catalog', 'information_schema', 'pg_toast') -- Exclui esquemas do sistema
+        ORDER BY
+            ultima_atividade_tabela DESC -- Ordena da mais recente para a mais antiga
+        LIMIT 10; -- Limita a, por exemplo, as 10 atualizações mais recentes
+    """)
+
+    sql_data_atualizacao = text("""
+        SELECT
+            TO_CHAR(MAX(ultima_atividade), 'DD/MM/YYYY HH24:MI:SS') AS ultima_atualizacao_dw_formatada
+        FROM
+            (
+                SELECT
+                    GREATEST(
+                        stat.last_vacuum, 
+                        stat.last_analyze,
+                        stat.last_autovacuum,
+                        stat.last_autoanalyze,
+                        NOW()
+                    ) AS ultima_atividade
+                FROM
+                    pg_stat_all_tables stat
+                JOIN
+                    pg_class c ON c.oid = stat.relid
+                JOIN
+                    pg_namespace n ON n.oid = c.relnamespace
+                WHERE
+                    c.relkind IN ('r') 
+                    AND n.nspname NOT IN ('pg_catalog', 'information_schema', 'pg_toast')
+            ) AS subquery;
+    """)
+
+    sql_quantidade = text("""
+        SELECT
+            n.nspname AS esquema,
+            COUNT(c.relname) AS quantidade_tabelas
+        FROM
+            pg_class c
+        JOIN
+            pg_namespace n ON n.oid = c.relnamespace
+        WHERE
+            c.relkind IN ('r')
+            AND n.nspname NOT LIKE 'pg\_%' ESCAPE '\'
+            AND n.nspname <> 'information_schema'
+            AND n.nspname NOT IN ('pg_catalog', 'pg_toast', 'information_schema')
+        GROUP BY
+            n.nspname
+        ORDER BY n.nspname ASC; 
+    """)
+
+    try:
+        postgres_engine = db.get_engine(bind='postgres_empresa')
+        
+        with postgres_engine.connect() as connection:
+            
+            res_quantidade = connection.execute(sql_quantidade)
+            df_quantidade = pd.DataFrame(res_quantidade.fetchall(), columns=res_quantidade.keys())
+
+            res_updates = connection.execute(sql_ultimas_updates)
+            df_updates = pd.DataFrame(res_updates.fetchall(), columns=res_updates.keys())
+
+            if 'ultima_atividade_tabela' in df_updates.columns:
+                df_updates['ultima_atividade_tabela'] = pd.to_datetime(df_updates['ultima_atividade_tabela'])
+                
+                df_updates['ultima_atividade_tabela'] = df_updates['ultima_atividade_tabela'].fillna('Sem data')
+                
+                df_updates['ultima_atividade_tabela'] = df_updates['ultima_atividade_tabela'].apply(
+                    lambda x: x.strftime('%d/%m/%Y %H:%M:%S') if pd.notnull(x) and x != 'Sem data' else 'Sem data'
+                )
+
+            logs_atualizacao = df_updates.to_dict('records') 
+
+            res_atualizacao = connection.execute(sql_data_atualizacao)
+
+            df_quantidade = df_quantidade.set_index('esquema')  
+
+            ultima_atualizacao_formatada = res_atualizacao.scalar_one_or_none()
+
+            if ultima_atualizacao_formatada is None:
+                ultima_atualizacao_formatada = "N/A"
+
+            numero_esquemas = len(df_quantidade)
+            numero_tabelas = df_quantidade['quantidade_tabelas'].sum()
+
+            df_quantidade = df_quantidade.reset_index()
+                            
+    except Exception as e:
+        return jsonify({"erro": f"Falha na conexão ao DB da empresa (bind). Detalhes: {str(e)}"}), 500
+
+    
+    return render_template('homepage2.html', numero_tabelas=numero_tabelas, numero_esquemas=numero_esquemas, ultima_atualizacao=ultima_atualizacao_formatada, logs_atualizacao=logs_atualizacao)
+
+@app.route('/pesquisar', methods=['GET'])
+@login_required
+def pesquisar():
+    termo_pesquisa = request.args.get('termo', '')
+
+    app.logger.debug("-" * 50)
+    app.logger.debug(f"[DEBUG 1] Termo recebido: '{termo_pesquisa}'")
+    
+    if not termo_pesquisa:
+        return redirect(url_for('home'))
+
+    # Gera o filtro SQL para pesquisa flexível (ex: '%termo%')
+    filtro = f"%{termo_pesquisa}%"
+    app.logger.debug(f"[DEBUG 2] Filtro de busca (LIKE): '{filtro}'")
+
+    # TESTE DE CONEXÃO: Tenta buscar todos os itens para garantir que a tabela é acessível
+    todos_itens = Tabela.query.all()
+    app.logger.debug(f"[DEBUG 3] Total de itens na tabela 'tabela': {len(todos_itens)}")
+    if len(todos_itens) == 0:
+        app.logger.warning("[AVISO CRÍTICO] A tabela está vazia. Verifique a string de conexão ou se os dados foram commitados.")
+    
+    # --- PONTO CHAVE: EXECUÇÃO DA BUSCA ---
+    tabela_encontrada = Tabela.query.filter(
+        Tabela.nome_tabela.ilike(filtro)
+    ).first()
+    # --------------------------------------
+    
+    app.logger.debug(f"[DEBUG 4] Resultado da query: {tabela_encontrada}")
+
+    if tabela_encontrada:
+        # SUCESSO: Redireciona
+        app.logger.debug(f"[DEBUG 5] SUCESSO! Redirecionando para ID: {tabela_encontrada.id}")
+        app.logger.debug("-" * 50)
+        return redirect(url_for('detalhesTabela', tabela_id=tabela_encontrada.id))
+    else:
+        # FALHA: Retorna para a home
+        app.logger.debug(f"[DEBUG 5] FALHA. Objeto Tabela é None. Voltando para home.")
+        app.logger.debug("-" * 50)
+        return redirect(url_for('home'))
 
 #############################################
 ######## PAGE ESQUEMA API ###############
@@ -450,6 +601,70 @@ def conectar():
     except Exception as e:
         return None
     return conn
+
+@app.route('/dados_grafico', methods=['GET'])
+def dados_grafico():
+
+    sql_tamanho = text("""
+        SELECT
+            nspname AS esquema,
+            COALESCE(SUM(pg_total_relation_size(C.oid)), 0) AS tamanho_bytes,
+            pg_size_pretty(COALESCE(SUM(pg_total_relation_size(C.oid)), 0)) AS tamanho_Formatado
+        FROM pg_class C
+            LEFT JOIN pg_namespace n
+                ON n.oid = C.relnamespace
+        WHERE nspname NOT IN ('pg_catalog', 'pg_toast', 'information_schema')
+        GROUP BY nspname
+          ORDER BY nspname ASC;
+    """)
+
+    sql_quantidade = text("""
+        SELECT
+            n.nspname AS esquema,
+            COUNT(c.relname) AS quantidade_tabelas
+        FROM
+            pg_class c
+        JOIN
+            pg_namespace n ON n.oid = c.relnamespace
+        WHERE
+            c.relkind IN ('r')
+            AND n.nspname NOT LIKE 'pg\_%' ESCAPE '\'
+            AND n.nspname <> 'information_schema'
+            AND n.nspname NOT IN ('pg_catalog', 'pg_toast', 'information_schema')
+        GROUP BY
+            n.nspname
+        ORDER BY n.nspname ASC; 
+    """)
+    
+    try:
+        postgres_engine = db.get_engine(bind='postgres_empresa')
+        
+        with postgres_engine.connect() as connection:
+
+            res_tamanho = connection.execute(sql_tamanho) 
+            df_tamanho = pd.DataFrame(res_tamanho.fetchall(), columns=res_tamanho.keys())
+            
+            res_quantidade = connection.execute(sql_quantidade)
+            df_quantidade = pd.DataFrame(res_quantidade.fetchall(), columns=res_quantidade.keys())
+
+            df_tamanho = df_tamanho.set_index('esquema')
+            df_quantidade = df_quantidade.set_index('esquema')      
+
+            df_final = df_tamanho.join(df_quantidade, how='outer').fillna(0)  
+
+            numero_esquemas = len(df_final)
+
+            df_final = df_final.reset_index()
+        
+            df_final['tamanho_bytes'] = df_final['tamanho_bytes'].astype(int)
+            df_final['quantidade_tabelas'] = df_final['quantidade_tabelas'].astype(int)
+                        
+            dados_grafico_json = df_final.to_dict(orient='records')
+        
+        return jsonify(dados_grafico_json)
+
+    except Exception as e:
+        return jsonify({"erro": f"Falha na conexão ao DB da empresa (bind). Detalhes: {str(e)}"}), 500
 
 def le_arquivo_csv(caminho_arquivo):
     try:
