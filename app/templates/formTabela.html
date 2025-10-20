@@ -11,26 +11,26 @@
                     <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
 
                         <div class="font-inter">
-                            {{ form.nome_tabela.label (class="ml-10 mt-5 dark:text-[#F5F2EB] font-inter block text-gray-900") }}
-                            {{ form.nome_tabela(class="border border-gray-300 bg-transparent rounded-lg p-1 mx-10 w-10/12 lg:w-8/12") }}
+                            {{ form.nome_tabela.label (class="ml-10 mt-5 dark:text-[#E3CFAA] font-inter block text-gray-900") }}
+                            {{ form.nome_tabela(class="border border-[#E3CFAA] bg-transparent rounded-lg p-1 mx-10 w-10/12 lg:w-8/12") }}
                         </div>
 
                         <div class="font-inter">
-                            {{ form.esquema.label (class="ml-10 mt-5 dark:text-[#F5F2EB] font-inter block text-gray-900") }}
-                            {{ form.esquema(class="border border-gray-300 bg-transparent rounded-lg p-1 mx-10 w-10/12 lg:w-8/12")  }}
+                            {{ form.esquema.label (class="ml-10 mt-5 dark:text-[#E3CFAA] font-inter block text-gray-900") }}
+                            {{ form.esquema(class="border border-[#E3CFAA] bg-transparent rounded-lg p-1 mx-10 w-10/12 lg:w-8/12")  }}
                         </div>
                         
                     </div>
                     
-                    {{ form.descricao_tabela.label (class="ml-10 mt-5 dark:text-[#F5F2EB] font-inter block text-gray-900") }} {{ form.descricao_tabela(class="border border-gray-300 bg-transparent w-10/12 rounded-lg p-1 mx-10") }}
+                    {{ form.descricao_tabela.label (class="ml-10 mt-5 dark:text-[#E3CFAA] font-inter block text-gray-900") }} {{ form.descricao_tabela(class="border border-[#E3CFAA] bg-transparent w-10/12 rounded-lg p-1 mx-10") }}
 
                     {{ form.dag.csrf_token }}
-                    {{ form.dag.dag.label (class="ml-10 mt-5 font-inter dark:text-[#F5F2EB] block text-gray-900") }} {{ form.dag.dag(class="border border-gray-300 bg-transparent rounded-lg p-1 mx-10 w-10/12") }}
-                    {{ form.dag.schedule.label (class="ml-10 mt-5 font-inter dark:text-[#F5F2EB] block text-gray-900") }} {{ form.dag.schedule(class="border border-gray-300 bg-transparent p-1 rounded-lg mx-10 w-10/12") }}
+                    {{ form.dag.dag.label (class="ml-10 mt-5 font-inter dark:text-[#E3CFAA] block text-gray-900") }} {{ form.dag.dag(class="border border-[#E3CFAA] bg-transparent rounded-lg p-1 mx-10 w-10/12") }}
+                    {{ form.dag.schedule.label (class="ml-10 mt-5 font-inter dark:text-[#E3CFAA] block text-gray-900") }} {{ form.dag.schedule(class="border border-[#E3CFAA] bg-transparent p-1 rounded-lg mx-10 w-10/12") }}
 
                     {{ form.origem.csrf_token }}
-                    {{ form.origem.sistema_origem.label (class="ml-10 mt-5 dark:text-[#F5F2EB] font-inter block text-gray-900") }} {{ form.origem.sistema_origem(class="border border-gray-300 bg-transparent p-1 rounded-lg w-10/12 mx-10") }}
-                    {{ form.origem.tabela_origem.label (class="ml-10 mt-5 dark:text-[#F5F2EB] font-inter block text-gray-900") }} {{ form.origem.tabela_origem(class="border border-gray-300 bg-transparent p-1 rounded-lg w-10/12 mx-10") }}
+                    {{ form.origem.sistema_origem.label (class="ml-10 mt-5 dark:text-[#E3CFAA] font-inter block text-gray-900") }} {{ form.origem.sistema_origem(class="border border-[#E3CFAA] bg-transparent p-1 rounded-lg w-10/12 mx-10") }}
+                    {{ form.origem.tabela_origem.label (class="ml-10 mt-5 dark:text-[#E3CFAA] font-inter block text-gray-900") }} {{ form.origem.tabela_origem(class="border border-[#E3CFAA] bg-transparent p-1 rounded-lg w-10/12 mx-10") }}
 
                     {{ form.csrf_token }}
 

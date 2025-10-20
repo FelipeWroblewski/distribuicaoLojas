@@ -25,6 +25,10 @@ from datetime import date, timedelta
 from barcode import Code128
 from barcode.writer import ImageWriter
 
+from app.services.data_service import get_dashboard_data
+from app.auth.auth_routes import auth_bp
+
+
 UPLOAD_FOLDER = os.path.join(os.path.dirname(__file__), 'static', 'uploads')
 
 @app.after_request
@@ -35,36 +39,8 @@ def add_header(response):
 #############################################
 ######## LOGIN PAGE #########################
 #############################################
-@app.route('/', methods=['GET', 'POST'])
-def homepage():
-    form = LoginForm()
 
-    # LOGIN
-    if form.validate_on_submit():
-        try:
-            # Tentando obter o usuário via login (substitua por sua lógica de login)
-            user = form.login()
-
-            if user:  # Se o login for bem-sucedido
-                login_user(user, remember=True)
-                return redirect(url_for('home'))  # Redireciona para a página inicial
-             # Mensagem de erro se o login falhar
-
-        except Exception as e:
-            print("aaa")
-
-    # Renderiza a mesma página com o formulário e mensagens flash
-    return render_template('index2.html', form=form, usuario=current_user)
-
-@app.context_processor
-def inject_user():
-    return dict(current_user=current_user)
-
-#Função de logout
-@app.route('/sair')
-def logout():
-    logout_user()
-    return redirect(url_for('homepage'))
+app.register_blueprint(auth_bp)
 
 #############################################
 ######## PAGE HOME ##########################
@@ -74,118 +50,18 @@ def logout():
 @app.route('/home/')
 @login_required
 def home():
-
-    sql_ultimas_updates = text("""
-        SELECT
-            n.nspname AS esquema,
-            c.relname AS nome_tabela,
-            -- Calcula a data mais recente de qualquer atividade de manutenção.
-            GREATEST(
-                stat.last_vacuum, 
-                stat.last_analyze, 
-                stat.last_autovacuum, 
-                stat.last_autoanalyze
-            ) AS ultima_atividade_tabela,
-            -- Mostra o número de tuplas (linhas) inseridas desde a última coleta de estatísticas
-            stat.n_tup_ins AS tuplas_inseridas
-        FROM
-            pg_stat_all_tables stat
-        JOIN
-            pg_class c ON c.oid = stat.relid
-        JOIN
-            pg_namespace n ON n.oid = c.relnamespace
-        WHERE
-            c.relkind IN ('r') -- Apenas tabelas reais
-            AND n.nspname NOT IN ('pg_catalog', 'information_schema', 'pg_toast') -- Exclui esquemas do sistema
-        ORDER BY
-            ultima_atividade_tabela DESC -- Ordena da mais recente para a mais antiga
-        LIMIT 10; -- Limita a, por exemplo, as 10 atualizações mais recentes
-    """)
-
-    sql_data_atualizacao = text("""
-        SELECT
-            TO_CHAR(MAX(ultima_atividade), 'DD/MM/YYYY HH24:MI:SS') AS ultima_atualizacao_dw_formatada
-        FROM
-            (
-                SELECT
-                    GREATEST(
-                        stat.last_vacuum, 
-                        stat.last_analyze,
-                        stat.last_autovacuum,
-                        stat.last_autoanalyze,
-                        NOW()
-                    ) AS ultima_atividade
-                FROM
-                    pg_stat_all_tables stat
-                JOIN
-                    pg_class c ON c.oid = stat.relid
-                JOIN
-                    pg_namespace n ON n.oid = c.relnamespace
-                WHERE
-                    c.relkind IN ('r') 
-                    AND n.nspname NOT IN ('pg_catalog', 'information_schema', 'pg_toast')
-            ) AS subquery;
-    """)
-
-    sql_quantidade = text("""
-        SELECT
-            n.nspname AS esquema,
-            COUNT(c.relname) AS quantidade_tabelas
-        FROM
-            pg_class c
-        JOIN
-            pg_namespace n ON n.oid = c.relnamespace
-        WHERE
-            c.relkind IN ('r')
-            AND n.nspname NOT LIKE 'pg\_%' ESCAPE '\'
-            AND n.nspname <> 'information_schema'
-            AND n.nspname NOT IN ('pg_catalog', 'pg_toast', 'information_schema')
-        GROUP BY
-            n.nspname
-        ORDER BY n.nspname ASC; 
-    """)
-
     try:
-        postgres_engine = db.get_engine(bind='postgres_empresa')
-        
-        with postgres_engine.connect() as connection:
-            
-            res_quantidade = connection.execute(sql_quantidade)
-            df_quantidade = pd.DataFrame(res_quantidade.fetchall(), columns=res_quantidade.keys())
-
-            res_updates = connection.execute(sql_ultimas_updates)
-            df_updates = pd.DataFrame(res_updates.fetchall(), columns=res_updates.keys())
-
-            if 'ultima_atividade_tabela' in df_updates.columns:
-                df_updates['ultima_atividade_tabela'] = pd.to_datetime(df_updates['ultima_atividade_tabela'])
-                
-                df_updates['ultima_atividade_tabela'] = df_updates['ultima_atividade_tabela'].fillna('Sem data')
-                
-                df_updates['ultima_atividade_tabela'] = df_updates['ultima_atividade_tabela'].apply(
-                    lambda x: x.strftime('%d/%m/%Y %H:%M:%S') if pd.notnull(x) and x != 'Sem data' else 'Sem data'
-                )
-
-            logs_atualizacao = df_updates.to_dict('records') 
-
-            res_atualizacao = connection.execute(sql_data_atualizacao)
-
-            df_quantidade = df_quantidade.set_index('esquema')  
-
-            ultima_atualizacao_formatada = res_atualizacao.scalar_one_or_none()
-
-            if ultima_atualizacao_formatada is None:
-                ultima_atualizacao_formatada = "N/A"
-
-            numero_esquemas = len(df_quantidade)
-            numero_tabelas = df_quantidade['quantidade_tabelas'].sum()
-
-            df_quantidade = df_quantidade.reset_index()
-                            
+        data = get_dashboard_data()
     except Exception as e:
-        return jsonify({"erro": f"Falha na conexão ao DB da empresa (bind). Detalhes: {str(e)}"}), 500
+        return jsonify({"erro": f"Falha na conexão ou processamento de dados do DB. Detalhes: {str(e)}"}), 500
 
-    
-    return render_template('homepage2.html', numero_tabelas=numero_tabelas, numero_esquemas=numero_esquemas, ultima_atualizacao=ultima_atualizacao_formatada, logs_atualizacao=logs_atualizacao)
+    return render_template(
+        'homepage2.html', 
+        numero_tabelas=data['numero_tabelas'], 
+        numero_esquemas=data['numero_esquemas'], 
+        ultima_atualizacao=data['ultima_atualizacao'], 
+        logs_atualizacao=data['logs_atualizacao']
+    )
 
 @app.route('/pesquisar', methods=['GET'])
 @login_required

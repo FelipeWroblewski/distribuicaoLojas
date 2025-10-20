@@ -29,6 +29,6 @@ socketio = SocketIO(app)
 
 
 
-from app.views import homepage
+from app.auth.auth_routes import login
 from app import views
 
