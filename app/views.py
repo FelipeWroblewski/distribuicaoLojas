@@ -26,7 +26,11 @@ from barcode import Code128
 from barcode.writer import ImageWriter
 
 from app.services.data_service import get_dashboard_data
+
 from app.auth.auth_routes import auth_bp
+from app.main.home_routes import home_bp
+from app.esquemas.esquemas_routes import esquemas_bp
+from app.detailsTable.detailsTable_routes import detailsTable_bp
 
 
 UPLOAD_FOLDER = os.path.join(os.path.dirname(__file__), 'static', 'uploads')
@@ -36,32 +40,13 @@ def add_header(response):
     response.cache_control.no_store = True
     return response
 
-#############################################
-######## LOGIN PAGE #########################
-#############################################
-
 app.register_blueprint(auth_bp)
 
-#############################################
-######## PAGE HOME ##########################
-#############################################
+app.register_blueprint(home_bp)
 
-# HOMEPAGE
-@app.route('/home/')
-@login_required
-def home():
-    try:
-        data = get_dashboard_data()
-    except Exception as e:
-        return jsonify({"erro": f"Falha na conexão ou processamento de dados do DB. Detalhes: {str(e)}"}), 500
+app.register_blueprint(detailsTable_bp)
 
-    return render_template(
-        'homepage2.html', 
-        numero_tabelas=data['numero_tabelas'], 
-        numero_esquemas=data['numero_esquemas'], 
-        ultima_atualizacao=data['ultima_atualizacao'], 
-        logs_atualizacao=data['logs_atualizacao']
-    )
+app.register_blueprint(esquemas_bp)
 
 @app.route('/pesquisar', methods=['GET'])
 @login_required
@@ -72,7 +57,7 @@ def pesquisar():
     app.logger.debug(f"[DEBUG 1] Termo recebido: '{termo_pesquisa}'")
     
     if not termo_pesquisa:
-        return redirect(url_for('home'))
+        return redirect(url_for('main.home'))
 
     # Gera o filtro SQL para pesquisa flexível (ex: '%termo%')
     filtro = f"%{termo_pesquisa}%"
@@ -101,167 +86,9 @@ def pesquisar():
         # FALHA: Retorna para a home
         app.logger.debug(f"[DEBUG 5] FALHA. Objeto Tabela é None. Voltando para home.")
         app.logger.debug("-" * 50)
-        return redirect(url_for('home'))
+        return redirect(url_for('main.home'))
 
-#############################################
-######## PAGE ESQUEMA API ###############
-#############################################
 
-@app.route('/esquemaApi/<string:nome_esquema>', methods=['GET'])
-@login_required
-def esquemaApi(nome_esquema):
-    tabelas_do_esquema = get_tabelas_por_esquema(nome_esquema)
-
-    return render_template('Esquemas/esquemaApi.html', esquema_atual=nome_esquema, tabelas=tabelas_do_esquema)
-
-#############################################
-######## PAGE ESQUEMA TABLES ############
-#############################################
-
-@app.route('/tabela/detalhes/<int:tabela_id>', methods=['GET'])
-@login_required
-def detalhesTabela(tabela_id):
-    from sqlalchemy.orm import joinedload
-
-    tabela = Tabela.query.options(
-        joinedload(Tabela.dag),
-        joinedload(Tabela.origem)
-    ).filter_by(id=tabela_id).first_or_404()
-
-    colunas = tabela.colunas
-    return render_template('tabela_detalhes.html', tabela=tabela, colunas=colunas)
-
-#############################################
-######## PAGE ESQUEMA COMERCIAL ###############
-#############################################
-
-# ESTOQUE DE PRODUTOS
-@app.route('/esquemaComercial/<string:nome_esquema>', methods=['GET'])
-@login_required
-def esquemaComercial(nome_esquema):
-    tabelas_do_esquema = get_tabelas_por_esquema(nome_esquema)
-
-    return render_template('Esquemas/esquemaComercial.html', esquema_atual=nome_esquema, tabelas=tabelas_do_esquema)
-
-#############################################
-######## PAGE ESQUEMA ESTOQUE ###############
-#############################################
-
-# ESTOQUE DE PRODUTOS
-@app.route('/esquemaEstoque/<string:nome_esquema>', methods=['GET'])
-@login_required
-def esquemaEstoque(nome_esquema):
-    tabelas_do_esquema = get_tabelas_por_esquema(nome_esquema)
-
-    return render_template('Esquemas/esquemaEstoque.html', esquema_atual=nome_esquema, tabelas=tabelas_do_esquema)
-
-#############################################
-######## PAGE ESQUEMA EVENTOS ###############
-#############################################
-
-# ESTOQUE DE PRODUTOS
-@app.route('/esquemaEventos/<string:nome_esquema>', methods=['GET'])
-@login_required
-def esquemaEventos(nome_esquema):
-    tabelas_do_esquema = get_tabelas_por_esquema(nome_esquema)
-
-    return render_template('Esquemas/esquemaEventos.html', esquema_atual=nome_esquema, tabelas=tabelas_do_esquema)
-
-#############################################
-######## PAGE ESQUEMA LIVE ###############
-#############################################
-
-# ESTOQUE DE PRODUTOS
-@app.route('/esquemaLive/<string:nome_esquema>', methods=['GET'])
-@login_required
-def esquemaLive(nome_esquema):
-    tabelas_do_esquema = get_tabelas_por_esquema(nome_esquema)
-
-    return render_template('Esquemas/esquemaLive.html', esquema_atual=nome_esquema, tabelas=tabelas_do_esquema)
-
-#############################################
-######## PAGE ESQUEMA MARFT ###############
-#############################################
-
-# ESTOQUE DE PRODUTOS
-@app.route('/esquemaMarft/<string:nome_esquema>', methods=['GET'])
-@login_required
-def esquemaMarft(nome_esquema):
-    tabelas_do_esquema = get_tabelas_por_esquema(nome_esquema)
-
-    return render_template('Esquemas/esquemaMarft.html', esquema_atual=nome_esquema, tabelas=tabelas_do_esquema)
-
-#############################################
-######## PAGE ESQUEMA PPCP ###############
-#############################################
-
-# ESTOQUE DE PRODUTOS
-@app.route('/esquemaPpcp/<string:nome_esquema>', methods=['GET'])
-@login_required
-def esquemaPpcp(nome_esquema):
-    tabelas_do_esquema = get_tabelas_por_esquema(nome_esquema)
-
-    return render_template('Esquemas/esquemaPpcp.html', esquema_atual=nome_esquema, tabelas=tabelas_do_esquema)
-
-#############################################
-######## PAGE ESQUEMA RH ###############
-#############################################
-
-# ESTOQUE DE PRODUTOS
-@app.route('/esquemaRh/<string:nome_esquema>', methods=['GET'])
-@login_required
-def esquemaRh(nome_esquema):
-    tabelas_do_esquema = get_tabelas_por_esquema(nome_esquema)
-
-    return render_template('Esquemas/esquemaRh.html', esquema_atual=nome_esquema, tabelas=tabelas_do_esquema)
-
-#############################################
-######## PAGE ESQUEMA RH_SCI ###############
-#############################################
-
-# ESTOQUE DE PRODUTOS
-@app.route('/esquemaRh_sci/<string:nome_esquema>', methods=['GET'])
-@login_required
-def esquemaRh_sci(nome_esquema):
-    tabelas_do_esquema = get_tabelas_por_esquema(nome_esquema)
-
-    return render_template('Esquemas/esquemaRh_sci.html', esquema_atual=nome_esquema, tabelas=tabelas_do_esquema)
-
-#############################################
-######## PAGE ESQUEMA SUPRIMENTOS ###############
-#############################################
-
-# ESTOQUE DE PRODUTOS
-@app.route('/esquemaSuprimentos/<string:nome_esquema>', methods=['GET'])
-@login_required
-def esquemaSuprimentos(nome_esquema):
-    tabelas_do_esquema = get_tabelas_por_esquema(nome_esquema)
-
-    return render_template('Esquemas/esquemaSuprimentos.html', esquema_atual=nome_esquema, tabelas=tabelas_do_esquema)
-
-#############################################
-######## PAGE ESQUEMA SUSTENTABILIDADE ###############
-#############################################
-
-# ESTOQUE DE PRODUTOS
-@app.route('/esquemaSustentabilidade/<string:nome_esquema>', methods=['GET'])
-@login_required
-def esquemaSustentabilidade(nome_esquema):
-    tabelas_do_esquema = get_tabelas_por_esquema(nome_esquema)
-
-    return render_template('Esquemas/esquemaSustentabilidade.html', esquema_atual=nome_esquema, tabelas=tabelas_do_esquema)
-
-#############################################
-######## PAGE ESQUEMA TI ###############
-#############################################
-
-# ESTOQUE DE PRODUTOS
-@app.route('/esquemaTi/<string:nome_esquema>', methods=['GET'])
-@login_required
-def esquemaTi(nome_esquema):
-    tabelas_do_esquema = get_tabelas_por_esquema(nome_esquema)
-
-    return render_template('Esquemas/esquemaTi.html', esquema_atual=nome_esquema, tabelas=tabelas_do_esquema)
 
 ################################################
 ######## PAGE DISTRIBUICAO DE PRODUTOS #########

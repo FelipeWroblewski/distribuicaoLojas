@@ -1,6 +1,7 @@
 import pandas as pd
 from sqlalchemy.sql import text
 from app import db
+from app.models import Tabela
 from .sql_queries import sql_ultimas_updates, sql_data_atualizacao, sql_quantidade
 
 def _format_updates_dataframe(df_updates):
@@ -54,3 +55,22 @@ def get_dashboard_data():
         'logs_atualizacao': logs_atualizacao,
         'dados_grafico': df_quantidade_list # Inclui o dado que pode ser usado pelo gráfico
     }
+
+def get_tabelas_por_esquema(nome_esquema):
+    """
+    Busca todas as tabelas associadas a um esquema específico no banco de dados.
+    ESTA É A FUNÇÃO QUE ESTAVA FALTANDO OU ESTAVA VAZIA.
+    """
+    try:
+        # A lógica real de consulta ao banco de dados deve estar aqui.
+        # Exemplo usando Flask-SQLAlchemy:
+        tabelas = Tabela.query.filter_by(esquema=nome_esquema).all()
+        
+        # Formata o resultado para a rota
+        return tabelas
+        
+    except Exception as e:
+        # É importante capturar exceções de DB na camada de Serviço.
+        print(f"Erro ao buscar tabelas para o esquema {nome_esquema}: {e}")
+        # Lança uma exceção para que a camada de rota possa tratá-la (ex: retornar 500)
+        raise Exception("Falha na conexão ou consulta ao banco de dados.")

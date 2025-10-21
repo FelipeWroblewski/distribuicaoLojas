@@ -1,19 +1,16 @@
-# ARQUIVO: live_tech/auth/auth_routes.py
-
 from flask import Blueprint, render_template, redirect, url_for
 from flask_login import login_user, current_user, logout_user
-# Importe seu formulário e classes de usuário
 from app.forms import LoginForm
 from app.models import User 
 
 # 1. Cria o Blueprint (o contêiner para as rotas de auth)
-auth_bp = Blueprint('auth', __name__, url_prefix='/')
+auth_bp = Blueprint('auth', __name__, url_prefix='/', template_folder='templates')
 
 
 @auth_bp.route('/', methods=['GET', 'POST'])
 def login(): 
     if current_user.is_authenticated:
-        return redirect(url_for('home'))
+        return redirect(url_for('main.home'))
         
     form = LoginForm()
 
@@ -22,13 +19,13 @@ def login():
             user = form.login() 
 
             if user:
-                login_user(user, remember=form.remember_me.data) # Use o campo remember_me do form
-                return redirect(url_for('home'))
+                login_user(user, remember=form.remember_me.data) 
+                return redirect(url_for('main.home'))
             
         except Exception as e:
             print(f"Erro durante o login: {e}")
 
-    return render_template('index2.html', form=form, usuario=current_user)
+    return render_template('auth/index2.html', form=form, usuario=current_user)
 
 
 @auth_bp.route('/logout')
