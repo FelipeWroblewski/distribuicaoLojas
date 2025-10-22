@@ -84,7 +84,7 @@ def pesquisar():
         # SUCESSO: Redireciona
         app.logger.debug(f"[DEBUG 5] SUCESSO! Redirecionando para ID: {tabela_encontrada.id}")
         app.logger.debug("-" * 50)
-        return redirect(url_for('detalhesTabela', tabela_id=tabela_encontrada.id))
+        return redirect(url_for('detailsTable.detalhesTabela', tabela_id=tabela_encontrada.id))
     else:
         # FALHA: Retorna para a home
         app.logger.debug(f"[DEBUG 5] FALHA. Objeto Tabela é None. Voltando para home.")
