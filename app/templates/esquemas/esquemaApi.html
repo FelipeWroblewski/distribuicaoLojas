@@ -7,13 +7,13 @@
     <div class="h-screen w-full bg-brancoCinza ">
         <div class="p-8 font-sans bg-gray-50 dark:bg-[#1a1a1a] min-h-screen">
 
-        <h1 class="text-4xl font-bold text-gray-800 mb-2 mt-16 dark:text-[#E3CFAA]">Esquema Estoque</h1>
+        <h1 class="text-4xl font-bold text-gray-800 mb-2 mt-16 dark:text-[#E3CFAA]">Esquema Api</h1>
         <p class="text-lg text-gray-600 mb-8 dark:text-[#AFA799]">Lista de todas as tabelas no esquema estoque</p>
 
-        <div class="bg-white dark:bg-[#2A2926] shadow-xl rounded-lg p-6 border border-gray-200 dark:border-gray-800 dark:border-none>
+        <div class="bg-white dark:bg-[#2A2926] shadow-xl rounded-lg p-6 border border-gray-200 dark:border-gray-800 dark:border-none">
 
-            <div class="overflow-x-auto">
-                <table class="min-w-full divide-y divide-[#E3CFAA] border border-[#E3CFAA] rounded-lg">
+            <div class="overflow-y-hidden overflow-x-auto">
+                <table class="min-w-full divide-y divide-gray-400 border-gray-400  dark:divide-[#E3CFAA] border dark:border-[#8A7864] rounded-lg">
                     
                     <thead class="bg-gray-100 dark:bg-[#3D3B36]">
                         <tr>
@@ -28,8 +28,9 @@
                         {% for tabela in tabelas %}
                             <tr>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                                    <a href="{{url_for('detalhesTabela', tabela_id=tabela.id )}}">{{ tabela.nome_tabela }}</a>
-                                </td>
+                                <a href="{{ url_for('detailsTable.detalhesTabela', tabela_id=tabela.id) }}">
+                                    {{ tabela.nome_tabela }}
+                                </a>                                
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ tabela.descricao_tabela }}</td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ tabela.dag.schedule }}</td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ tabela.origem.sistema_origem }}</td>

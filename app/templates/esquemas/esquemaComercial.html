@@ -4,27 +4,27 @@
 
 {% include 'navbar.html' %}
 
-    <div class="h-screen w-full bg-brancoCinza">
-        <div class="p-8 font-sans bg-gray-50 min-h-screen">
+    <div class="h-screen w-full bg-brancoCinza ">
+        <div class="p-8 font-sans bg-gray-50 dark:bg-[#1a1a1a] min-h-screen">
 
-        <h1 class="text-4xl font-bold text-gray-800 mb-2 mt-16">Esquema Estoque</h1>
-        <p class="text-lg text-gray-600 mb-8">Lista de todas as tabelas no esquema estoque</p>
+        <h1 class="text-4xl font-bold text-gray-800 mb-2 mt-16 dark:text-[#E3CFAA]">Esquema Comercial</h1>
+        <p class="text-lg text-gray-600 mb-8 dark:text-[#AFA799]">Lista de todas as tabelas no esquema estoque</p>
 
-        <div class="bg-white shadow-xl rounded-lg p-6 border border-gray-200">
+        <div class="bg-white dark:bg-[#2A2926] shadow-xl rounded-lg p-6 border border-gray-200 dark:border-gray-800 dark:border-none">
 
-            <div class="overflow-x-auto">
-                <table class="min-w-full divide-y divide-gray-200 border border-gray-200 rounded-lg">
+            <div class="overflow-y-auto overflow-x-auto">
+                <table class="min-w-full divide-y divide-[#E3CFAA] border border-[#E3CFAA] rounded-lg">
                     
-                    <thead class="bg-gray-100">
+                    <thead class="bg-gray-100 dark:bg-[#3D3B36]">
                         <tr>
-                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Nome Tabela</th>
-                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Descrição</th>
-                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Rotina Atualização</th>
-                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Fonte</th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-700 dark:text-[#E3CFAA] uppercase tracking-wider">Nome Tabela</th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-700 dark:text-[#E3CFAA] uppercase tracking-wider">Descrição</th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-700 dark:text-[#E3CFAA] uppercase tracking-wider">Rotina Atualização</th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-700 dark:text-[#E3CFAA] uppercase tracking-wider">Fonte</th>
                         </tr>
                     </thead>
 
-                    <tbody class="bg-white divide-y divide-gray-200">
+                    <tbody class="bg-white dark:bg-[#d8d6d2] dark:bg-none divide-y divide-gray-200">
                         {% for tabela in tabelas %}
                             <tr>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">

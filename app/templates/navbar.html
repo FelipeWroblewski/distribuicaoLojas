@@ -13,9 +13,12 @@
                 </div>
 
                 <div class="flex items-center gap-4 mr-10">
+                    <a href="{{url_for('main.home')}}" class="decoration-0">
+                        <i class="fa-solid fa-house dark:text-[#22211d] flex flex-row items-center gap-2 p-1 h-8 text-lg w-8 justify-center rounded-md bg-begePrincipal md:hidden"></i>
+                    </a>
                     <a href="{{url_for('main.home')}}" class="flex flex-row items-center gap-2 px-2 py-1 min-w-fit justify-center rounded-md bg-begePrincipal">
-                        <i class="fa-solid fa-user dark:text-[#22211D]"></i>
-                        <h1 class="dark:text-[#22211D]">{{ current_user.puxar_nome() }}</h1>
+                        <i class="fa-solid fa-user dark:text-[#22211D]  p-1"></i>
+                        <h1 class="dark:text-[#22211D] hidden md:block">{{ current_user.puxar_nome() }}</h1>
                     </a>
 
                     <a href="{{url_for('auth.logout')}}" class="bg-begePrincipal p-1 w-20 flex flex-row items-center gap-2 justify-center rounded-md">
