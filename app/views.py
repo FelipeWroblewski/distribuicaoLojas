@@ -31,6 +31,7 @@ from app.auth.auth_routes import auth_bp
 from app.main.home_routes import home_bp
 from app.esquemas.esquemas_routes import esquemas_bp
 from app.detailsTable.detailsTable_routes import detailsTable_bp
+from app.createTable.createTable_routes import createTableBp
 
 
 UPLOAD_FOLDER = os.path.join(os.path.dirname(__file__), 'static', 'uploads')
@@ -47,6 +48,8 @@ app.register_blueprint(home_bp)
 app.register_blueprint(detailsTable_bp)
 
 app.register_blueprint(esquemas_bp)
+
+app.register_blueprint(createTableBp)
 
 @app.route('/pesquisar', methods=['GET'])
 @login_required
@@ -89,7 +92,6 @@ def pesquisar():
         return redirect(url_for('main.home'))
 
 
-
 ################################################
 ######## PAGE DISTRIBUICAO DE PRODUTOS #########
 ################################################
@@ -102,168 +104,7 @@ def distribuicao():
 ################################################
 #### FUNÇÃO PARA PROCESSAR AS TABELAS  #########
 ################################################
-@app.route('/processarTabela', methods=['GET', 'POST'])
-@login_required
-def processarTabela():
-   
-    form = TabelaForm()
 
-    try:
-        from sqlalchemy.orm import joinedload 
-        
-        tabelas = Tabela.query.options(
-            joinedload(Tabela.dag),
-            joinedload(Tabela.origem)
-        ).all()
-
-    except Exception as e:
-        # MUDANÇA CRÍTICA: Usando o logger do Flask com exc_info=True
-        app.logger.error(">>> ERRO CRÍTICO DURANTE A BUSCA DE TABELAS (GET/LOAD)")
-        # Este comando irá imprimir a pilha de chamadas completa (traceback)
-        app.logger.error("Rastreamento Completo da Exceção:", exc_info=True)
-        
-        tabelas = []
-
-    if form.validate_on_submit():
-        
-        nome_esquema = form.esquema.data
-        sql_query = form.create_table_sql.data
-
-        colunas_analisadas = parse_create_table_sql(sql_query)
-        
-        if not colunas_analisadas or not nome_esquema:
-            flash("O campo SQL ou Esquema está vazio.", "danger")
-            return render_template('formTabela.html', form=form, tabelas=Tabela.query.all())
-
-        try:
-            # Criar DAG e Origem
-            dag = Dag(
-                dag=form.dag.dag.data,
-                schedule=form.dag.schedule.data
-            )
-            origem = Origem(
-                sistema_origem=form.origem.sistema_origem.data,
-                tabela_origem=form.origem.tabela_origem.data
-            )
-
-            db.session.add(dag)
-            db.session.add(origem)
-            db.session.flush()
-
-            # Criar Tabela
-            tabela = Tabela(
-                nome_tabela=form.nome_tabela.data,
-                descricao_tabela=form.descricao_tabela.data,
-                esquema=form.esquema.data,
-                dag=dag,
-                origem=origem
-            )
-            db.session.add(tabela)
-            db.session.flush()
-
-            # 2. Criar e adicionar as colunas do resultado da análise SQL
-            colunas_salvas = []
-            for col_info in colunas_analisadas:
-                coluna = Colunas(
-                    nome_coluna=col_info['nome'],
-                    # O tipo de dado é tudo o que veio depois do nome da coluna (incluindo restrições)
-                    tipo_dado=col_info['tipo'], 
-                    tabela=tabela # Objeto Tabela que agora tem um ID
-                )
-                colunas_salvas.append(coluna)
-                db.session.add(coluna)
-                
-            # Adicionar as colunas em lote (opcional, mas bom para clareza)
-            # db.session.add_all(colunas_salvas) # Já estamos adicionando uma a uma no loop acima.
-
-            db.session.commit()
-
-            flash("Tabela e Colunas criadas com sucesso a partir da query SQL!", "success")
-            return redirect(url_for('processarTabela', nome_esquema=nome_esquema))
-            
-            
-        except Exception as e:
-            db.session.rollback() 
-            
-            flash(f"Ocorreu um erro de banco de dados. Verifique o console. Detalhes: {e}", "danger")
-            return render_template('formTabela.html', form=form, tabelas=tabelas)
-            
-    else:
-
-        for field, errors in form.errors.items():
-             print(f"Erro de validação no campo '{field}': {errors}")
-
-    return render_template('formTabela.html', form=form, tabelas=tabelas)
-
-##################################################
-#### FUNÇÃO PARA CRIAR DADOS DA TABELA COLUNAS####
-##################################################
-
-import re
-
-def parse_create_table_sql(sql_query):
-
-    sql_query = re.sub(r'--.*', '', sql_query)
-    sql_query = re.sub(r'/\*.*?\*/', '', sql_query, flags=re.DOTALL)
-    
-    # Normaliza espaços
-    sql_query = re.sub(r'\s+', ' ', sql_query).strip()
-    
-    match = re.search(r'\((.*)\)', sql_query, re.IGNORECASE | re.DOTALL)
-    
-    if not match:
-        
-        return []
-
-    table_body = match.group(1).strip()
-
-    column_definitions = table_body.split(',')
-    
-    columns = []
-    
-    for definition in column_definitions:
-        
-        clean_def = definition.strip()
-        if not clean_def:
-            continue
-
-        
-        match_col = re.match(r'^\s*"?([a-zA-Z_][a-zA-Z0-9_]*)"?\s+(.+)$', clean_def, re.IGNORECASE | re.DOTALL)
-        
-        if match_col:
-            col_name = match_col.group(1)
-            type_and_constraints = match_col.group(2).strip()
-            
-            
-            columns.append({
-                'nome': col_name,
-                'tipo': type_and_constraints
-            })
-        else:
-            
-            if 'primary key' in clean_def.lower() or 'foreign key' in clean_def.lower() or 'constraint' in clean_def.lower():
-                continue
-
-            
-            print(f"Aviso: Não foi possível analisar a definição de coluna: {clean_def}")
-
-
-    return columns
-    
-##################################################
-#### FUNÇÃO PARA VISUALIZAR DADOS DA TABELA#######
-##################################################
-
-def get_tabelas_por_esquema(nome_esquema):
-
-    from sqlalchemy.orm import joinedload
-    
-    tabelas = Tabela.query.options(
-        joinedload(Tabela.dag),
-        joinedload(Tabela.origem)
-    ).filter_by(esquema=nome_esquema).all()
-    
-    return tabelas
 
 ################################################
 ######## FUNÇÃO PARA PUXAR ARQUIVO CSV##########

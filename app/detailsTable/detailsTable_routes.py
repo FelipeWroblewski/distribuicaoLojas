@@ -25,4 +25,4 @@ def detalhesTabela(tabela_id):
     ).filter_by(id=tabela_id).first_or_404()
 
     colunas = tabela.colunas
-    return render_template('detailsTable/tabela_detalhes.html', tabela=tabela, colunas=colunas)
+    return render_template('tabela_detalhes.html', tabela=tabela, colunas=colunas)

@@ -28,7 +28,7 @@ def home():
         return jsonify({"erro": f"Falha na conexão ou processamento de dados do DB. Detalhes: {str(e)}"}), 500
 
     return render_template(
-        'main/homepage.html', 
+        'homepage.html', 
         numero_tabelas=data['numero_tabelas'], 
         numero_esquemas=data['numero_esquemas'], 
         ultima_atualizacao=data['ultima_atualizacao'], 

@@ -25,7 +25,7 @@ def login():
         except Exception as e:
             print(f"Erro durante o login: {e}")
 
-    return render_template('auth/index2.html', form=form, usuario=current_user)
+    return render_template('index2.html', form=form, usuario=current_user)
 
 
 @auth_bp.route('/logout')
