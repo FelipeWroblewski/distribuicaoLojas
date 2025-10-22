@@ -1,23 +1,40 @@
+// ARQUIVO: navbar.js
+
 const sideBar = document.getElementById('sidebar');
 const toogleBtn = document.getElementById('toogleSidebar');
 const content = document.getElementById("content");
 
-const btn = document.querySelector('#dark-mode');
-const html = document.querySelector('html');
+// O Dark Mode já foi inicializado pelo homepage.js.
 
-// Verifica se o modo escuro estava ativo antes
-if (localStorage.getItem('theme') === 'dark') {
-    html.classList.add('dark');
-}
+document.addEventListener('DOMContentLoaded', function() {
+    const darkBtn = document.querySelector('#dark-mode'); 
 
-btn.addEventListener('click', function() {
-    html.classList.toggle('dark');
+    // Lógica do Dark Mode
+    if (darkBtn) {
+        darkBtn.addEventListener('click', function() {
+            // Usa a variável global 'htmlElement' (declarada em homepage.js)
+            htmlElement.classList.toggle('dark');
 
-    if (html.classList.contains('dark')) {
-        localStorage.setItem('theme', 'dark');
-    } else {
-        localStorage.setItem('theme', 'light');
+            const isDark = htmlElement.classList.contains('dark');
+            localStorage.setItem('theme', isDark ? 'dark' : 'light');
+
+            // Chama a função global 'aplicarTemaHighcharts' (declarada em homepage.js)
+            if (typeof aplicarTemaHighcharts === 'function') {
+                aplicarTemaHighcharts(isDark);
+            }
+        });
     }
+
+    // Lógica de alternância da Navbar
+    toogleBtn.addEventListener("click", () => {
+        if (sideBar.classList.contains("w-0")) {
+            sideBar.classList.replace("w-0", "w-96");
+            content.classList.add("ml-64"); 
+        } else {
+            sideBar.classList.replace("w-96", "w-0");
+            content.classList.remove("ml-96");
+        }
+    });
 });
 
 
@@ -31,13 +48,3 @@ function toogleSidebar() {
 }
 
 toogleBtn.addEventListener('click', toogleSidebar);
-
-toogleBtn.addEventListener("click", () => {
-  if (sideBar.classList.contains("w-0")) {
-    sideBar.classList.replace("w-0", "w-96");
-    content.classList.add("ml-64"); // empurra o conteúdo
-  } else {
-    sideBar.classList.replace("w-96", "w-0");
-    content.classList.remove("ml-96");
-  }
-});

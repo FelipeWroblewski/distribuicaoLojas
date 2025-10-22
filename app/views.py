@@ -25,6 +25,15 @@ from datetime import date, timedelta
 from barcode import Code128
 from barcode.writer import ImageWriter
 
+from app.services.data_service import get_dashboard_data
+
+from app.auth.auth_routes import auth_bp
+from app.main.home_routes import home_bp
+from app.esquemas.esquemas_routes import esquemas_bp
+from app.detailsTable.detailsTable_routes import detailsTable_bp
+from app.createTable.createTable_routes import createTableBp
+
+
 UPLOAD_FOLDER = os.path.join(os.path.dirname(__file__), 'static', 'uploads')
 
 @app.after_request
@@ -32,160 +41,15 @@ def add_header(response):
     response.cache_control.no_store = True
     return response
 
-#############################################
-######## LOGIN PAGE #########################
-#############################################
-@app.route('/', methods=['GET', 'POST'])
-def homepage():
-    form = LoginForm()
+app.register_blueprint(auth_bp)
 
-    # LOGIN
-    if form.validate_on_submit():
-        try:
-            # Tentando obter o usuário via login (substitua por sua lógica de login)
-            user = form.login()
+app.register_blueprint(home_bp)
 
-            if user:  # Se o login for bem-sucedido
-                login_user(user, remember=True)
-                return redirect(url_for('home'))  # Redireciona para a página inicial
-             # Mensagem de erro se o login falhar
+app.register_blueprint(detailsTable_bp)
 
-        except Exception as e:
-            print("aaa")
+app.register_blueprint(esquemas_bp)
 
-    # Renderiza a mesma página com o formulário e mensagens flash
-    return render_template('index2.html', form=form, usuario=current_user)
-
-@app.context_processor
-def inject_user():
-    return dict(current_user=current_user)
-
-#Função de logout
-@app.route('/sair')
-def logout():
-    logout_user()
-    return redirect(url_for('homepage'))
-
-#############################################
-######## PAGE HOME ##########################
-#############################################
-
-# HOMEPAGE
-@app.route('/home/')
-@login_required
-def home():
-
-    sql_ultimas_updates = text("""
-        SELECT
-            n.nspname AS esquema,
-            c.relname AS nome_tabela,
-            -- Calcula a data mais recente de qualquer atividade de manutenção.
-            GREATEST(
-                stat.last_vacuum, 
-                stat.last_analyze, 
-                stat.last_autovacuum, 
-                stat.last_autoanalyze
-            ) AS ultima_atividade_tabela,
-            -- Mostra o número de tuplas (linhas) inseridas desde a última coleta de estatísticas
-            stat.n_tup_ins AS tuplas_inseridas
-        FROM
-            pg_stat_all_tables stat
-        JOIN
-            pg_class c ON c.oid = stat.relid
-        JOIN
-            pg_namespace n ON n.oid = c.relnamespace
-        WHERE
-            c.relkind IN ('r') -- Apenas tabelas reais
-            AND n.nspname NOT IN ('pg_catalog', 'information_schema', 'pg_toast') -- Exclui esquemas do sistema
-        ORDER BY
-            ultima_atividade_tabela DESC -- Ordena da mais recente para a mais antiga
-        LIMIT 10; -- Limita a, por exemplo, as 10 atualizações mais recentes
-    """)
-
-    sql_data_atualizacao = text("""
-        SELECT
-            TO_CHAR(MAX(ultima_atividade), 'DD/MM/YYYY HH24:MI:SS') AS ultima_atualizacao_dw_formatada
-        FROM
-            (
-                SELECT
-                    GREATEST(
-                        stat.last_vacuum, 
-                        stat.last_analyze,
-                        stat.last_autovacuum,
-                        stat.last_autoanalyze,
-                        NOW()
-                    ) AS ultima_atividade
-                FROM
-                    pg_stat_all_tables stat
-                JOIN
-                    pg_class c ON c.oid = stat.relid
-                JOIN
-                    pg_namespace n ON n.oid = c.relnamespace
-                WHERE
-                    c.relkind IN ('r') 
-                    AND n.nspname NOT IN ('pg_catalog', 'information_schema', 'pg_toast')
-            ) AS subquery;
-    """)
-
-    sql_quantidade = text("""
-        SELECT
-            n.nspname AS esquema,
-            COUNT(c.relname) AS quantidade_tabelas
-        FROM
-            pg_class c
-        JOIN
-            pg_namespace n ON n.oid = c.relnamespace
-        WHERE
-            c.relkind IN ('r')
-            AND n.nspname NOT LIKE 'pg\_%' ESCAPE '\'
-            AND n.nspname <> 'information_schema'
-            AND n.nspname NOT IN ('pg_catalog', 'pg_toast', 'information_schema')
-        GROUP BY
-            n.nspname
-        ORDER BY n.nspname ASC; 
-    """)
-
-    try:
-        postgres_engine = db.get_engine(bind='postgres_empresa')
-        
-        with postgres_engine.connect() as connection:
-            
-            res_quantidade = connection.execute(sql_quantidade)
-            df_quantidade = pd.DataFrame(res_quantidade.fetchall(), columns=res_quantidade.keys())
-
-            res_updates = connection.execute(sql_ultimas_updates)
-            df_updates = pd.DataFrame(res_updates.fetchall(), columns=res_updates.keys())
-
-            if 'ultima_atividade_tabela' in df_updates.columns:
-                df_updates['ultima_atividade_tabela'] = pd.to_datetime(df_updates['ultima_atividade_tabela'])
-                
-                df_updates['ultima_atividade_tabela'] = df_updates['ultima_atividade_tabela'].fillna('Sem data')
-                
-                df_updates['ultima_atividade_tabela'] = df_updates['ultima_atividade_tabela'].apply(
-                    lambda x: x.strftime('%d/%m/%Y %H:%M:%S') if pd.notnull(x) and x != 'Sem data' else 'Sem data'
-                )
-
-            logs_atualizacao = df_updates.to_dict('records') 
-
-            res_atualizacao = connection.execute(sql_data_atualizacao)
-
-            df_quantidade = df_quantidade.set_index('esquema')  
-
-            ultima_atualizacao_formatada = res_atualizacao.scalar_one_or_none()
-
-            if ultima_atualizacao_formatada is None:
-                ultima_atualizacao_formatada = "N/A"
-
-            numero_esquemas = len(df_quantidade)
-            numero_tabelas = df_quantidade['quantidade_tabelas'].sum()
-
-            df_quantidade = df_quantidade.reset_index()
-                            
-    except Exception as e:
-        return jsonify({"erro": f"Falha na conexão ao DB da empresa (bind). Detalhes: {str(e)}"}), 500
-
-    
-    return render_template('homepage2.html', numero_tabelas=numero_tabelas, numero_esquemas=numero_esquemas, ultima_atualizacao=ultima_atualizacao_formatada, logs_atualizacao=logs_atualizacao)
+app.register_blueprint(createTableBp)
 
 @app.route('/pesquisar', methods=['GET'])
 @login_required
@@ -196,7 +60,7 @@ def pesquisar():
     app.logger.debug(f"[DEBUG 1] Termo recebido: '{termo_pesquisa}'")
     
     if not termo_pesquisa:
-        return redirect(url_for('home'))
+        return redirect(url_for('main.home'))
 
     # Gera o filtro SQL para pesquisa flexível (ex: '%termo%')
     filtro = f"%{termo_pesquisa}%"
@@ -225,167 +89,8 @@ def pesquisar():
         # FALHA: Retorna para a home
         app.logger.debug(f"[DEBUG 5] FALHA. Objeto Tabela é None. Voltando para home.")
         app.logger.debug("-" * 50)
-        return redirect(url_for('home'))
+        return redirect(url_for('main.home'))
 
-#############################################
-######## PAGE ESQUEMA API ###############
-#############################################
-
-@app.route('/esquemaApi/<string:nome_esquema>', methods=['GET'])
-@login_required
-def esquemaApi(nome_esquema):
-    tabelas_do_esquema = get_tabelas_por_esquema(nome_esquema)
-
-    return render_template('Esquemas/esquemaApi.html', esquema_atual=nome_esquema, tabelas=tabelas_do_esquema)
-
-#############################################
-######## PAGE ESQUEMA TABLES ############
-#############################################
-
-@app.route('/tabela/detalhes/<int:tabela_id>', methods=['GET'])
-@login_required
-def detalhesTabela(tabela_id):
-    from sqlalchemy.orm import joinedload
-
-    tabela = Tabela.query.options(
-        joinedload(Tabela.dag),
-        joinedload(Tabela.origem)
-    ).filter_by(id=tabela_id).first_or_404()
-
-    colunas = tabela.colunas
-    return render_template('tabela_detalhes.html', tabela=tabela, colunas=colunas)
-
-#############################################
-######## PAGE ESQUEMA COMERCIAL ###############
-#############################################
-
-# ESTOQUE DE PRODUTOS
-@app.route('/esquemaComercial/<string:nome_esquema>', methods=['GET'])
-@login_required
-def esquemaComercial(nome_esquema):
-    tabelas_do_esquema = get_tabelas_por_esquema(nome_esquema)
-
-    return render_template('Esquemas/esquemaComercial.html', esquema_atual=nome_esquema, tabelas=tabelas_do_esquema)
-
-#############################################
-######## PAGE ESQUEMA ESTOQUE ###############
-#############################################
-
-# ESTOQUE DE PRODUTOS
-@app.route('/esquemaEstoque/<string:nome_esquema>', methods=['GET'])
-@login_required
-def esquemaEstoque(nome_esquema):
-    tabelas_do_esquema = get_tabelas_por_esquema(nome_esquema)
-
-    return render_template('Esquemas/esquemaEstoque.html', esquema_atual=nome_esquema, tabelas=tabelas_do_esquema)
-
-#############################################
-######## PAGE ESQUEMA EVENTOS ###############
-#############################################
-
-# ESTOQUE DE PRODUTOS
-@app.route('/esquemaEventos/<string:nome_esquema>', methods=['GET'])
-@login_required
-def esquemaEventos(nome_esquema):
-    tabelas_do_esquema = get_tabelas_por_esquema(nome_esquema)
-
-    return render_template('Esquemas/esquemaEventos.html', esquema_atual=nome_esquema, tabelas=tabelas_do_esquema)
-
-#############################################
-######## PAGE ESQUEMA LIVE ###############
-#############################################
-
-# ESTOQUE DE PRODUTOS
-@app.route('/esquemaLive/<string:nome_esquema>', methods=['GET'])
-@login_required
-def esquemaLive(nome_esquema):
-    tabelas_do_esquema = get_tabelas_por_esquema(nome_esquema)
-
-    return render_template('Esquemas/esquemaLive.html', esquema_atual=nome_esquema, tabelas=tabelas_do_esquema)
-
-#############################################
-######## PAGE ESQUEMA MARFT ###############
-#############################################
-
-# ESTOQUE DE PRODUTOS
-@app.route('/esquemaMarft/<string:nome_esquema>', methods=['GET'])
-@login_required
-def esquemaMarft(nome_esquema):
-    tabelas_do_esquema = get_tabelas_por_esquema(nome_esquema)
-
-    return render_template('Esquemas/esquemaMarft.html', esquema_atual=nome_esquema, tabelas=tabelas_do_esquema)
-
-#############################################
-######## PAGE ESQUEMA PPCP ###############
-#############################################
-
-# ESTOQUE DE PRODUTOS
-@app.route('/esquemaPpcp/<string:nome_esquema>', methods=['GET'])
-@login_required
-def esquemaPpcp(nome_esquema):
-    tabelas_do_esquema = get_tabelas_por_esquema(nome_esquema)
-
-    return render_template('Esquemas/esquemaPpcp.html', esquema_atual=nome_esquema, tabelas=tabelas_do_esquema)
-
-#############################################
-######## PAGE ESQUEMA RH ###############
-#############################################
-
-# ESTOQUE DE PRODUTOS
-@app.route('/esquemaRh/<string:nome_esquema>', methods=['GET'])
-@login_required
-def esquemaRh(nome_esquema):
-    tabelas_do_esquema = get_tabelas_por_esquema(nome_esquema)
-
-    return render_template('Esquemas/esquemaRh.html', esquema_atual=nome_esquema, tabelas=tabelas_do_esquema)
-
-#############################################
-######## PAGE ESQUEMA RH_SCI ###############
-#############################################
-
-# ESTOQUE DE PRODUTOS
-@app.route('/esquemaRh_sci/<string:nome_esquema>', methods=['GET'])
-@login_required
-def esquemaRh_sci(nome_esquema):
-    tabelas_do_esquema = get_tabelas_por_esquema(nome_esquema)
-
-    return render_template('Esquemas/esquemaRh_sci.html', esquema_atual=nome_esquema, tabelas=tabelas_do_esquema)
-
-#############################################
-######## PAGE ESQUEMA SUPRIMENTOS ###############
-#############################################
-
-# ESTOQUE DE PRODUTOS
-@app.route('/esquemaSuprimentos/<string:nome_esquema>', methods=['GET'])
-@login_required
-def esquemaSuprimentos(nome_esquema):
-    tabelas_do_esquema = get_tabelas_por_esquema(nome_esquema)
-
-    return render_template('Esquemas/esquemaSuprimentos.html', esquema_atual=nome_esquema, tabelas=tabelas_do_esquema)
-
-#############################################
-######## PAGE ESQUEMA SUSTENTABILIDADE ###############
-#############################################
-
-# ESTOQUE DE PRODUTOS
-@app.route('/esquemaSustentabilidade/<string:nome_esquema>', methods=['GET'])
-@login_required
-def esquemaSustentabilidade(nome_esquema):
-    tabelas_do_esquema = get_tabelas_por_esquema(nome_esquema)
-
-    return render_template('Esquemas/esquemaSustentabilidade.html', esquema_atual=nome_esquema, tabelas=tabelas_do_esquema)
-
-#############################################
-######## PAGE ESQUEMA TI ###############
-#############################################
-
-# ESTOQUE DE PRODUTOS
-@app.route('/esquemaTi/<string:nome_esquema>', methods=['GET'])
-@login_required
-def esquemaTi(nome_esquema):
-    tabelas_do_esquema = get_tabelas_por_esquema(nome_esquema)
-
-    return render_template('Esquemas/esquemaTi.html', esquema_atual=nome_esquema, tabelas=tabelas_do_esquema)
 
 ################################################
 ######## PAGE DISTRIBUICAO DE PRODUTOS #########
@@ -399,168 +104,7 @@ def distribuicao():
 ################################################
 #### FUNÇÃO PARA PROCESSAR AS TABELAS  #########
 ################################################
-@app.route('/processarTabela', methods=['GET', 'POST'])
-@login_required
-def processarTabela():
-   
-    form = TabelaForm()
 
-    try:
-        from sqlalchemy.orm import joinedload 
-        
-        tabelas = Tabela.query.options(
-            joinedload(Tabela.dag),
-            joinedload(Tabela.origem)
-        ).all()
-
-    except Exception as e:
-        # MUDANÇA CRÍTICA: Usando o logger do Flask com exc_info=True
-        app.logger.error(">>> ERRO CRÍTICO DURANTE A BUSCA DE TABELAS (GET/LOAD)")
-        # Este comando irá imprimir a pilha de chamadas completa (traceback)
-        app.logger.error("Rastreamento Completo da Exceção:", exc_info=True)
-        
-        tabelas = []
-
-    if form.validate_on_submit():
-        
-        nome_esquema = form.esquema.data
-        sql_query = form.create_table_sql.data
-
-        colunas_analisadas = parse_create_table_sql(sql_query)
-        
-        if not colunas_analisadas or not nome_esquema:
-            flash("O campo SQL ou Esquema está vazio.", "danger")
-            return render_template('formTabela.html', form=form, tabelas=Tabela.query.all())
-
-        try:
-            # Criar DAG e Origem
-            dag = Dag(
-                dag=form.dag.dag.data,
-                schedule=form.dag.schedule.data
-            )
-            origem = Origem(
-                sistema_origem=form.origem.sistema_origem.data,
-                tabela_origem=form.origem.tabela_origem.data
-            )
-
-            db.session.add(dag)
-            db.session.add(origem)
-            db.session.flush()
-
-            # Criar Tabela
-            tabela = Tabela(
-                nome_tabela=form.nome_tabela.data,
-                descricao_tabela=form.descricao_tabela.data,
-                esquema=form.esquema.data,
-                dag=dag,
-                origem=origem
-            )
-            db.session.add(tabela)
-            db.session.flush()
-
-            # 2. Criar e adicionar as colunas do resultado da análise SQL
-            colunas_salvas = []
-            for col_info in colunas_analisadas:
-                coluna = Colunas(
-                    nome_coluna=col_info['nome'],
-                    # O tipo de dado é tudo o que veio depois do nome da coluna (incluindo restrições)
-                    tipo_dado=col_info['tipo'], 
-                    tabela=tabela # Objeto Tabela que agora tem um ID
-                )
-                colunas_salvas.append(coluna)
-                db.session.add(coluna)
-                
-            # Adicionar as colunas em lote (opcional, mas bom para clareza)
-            # db.session.add_all(colunas_salvas) # Já estamos adicionando uma a uma no loop acima.
-
-            db.session.commit()
-
-            flash("Tabela e Colunas criadas com sucesso a partir da query SQL!", "success")
-            return redirect(url_for('processarTabela', nome_esquema=nome_esquema))
-            
-            
-        except Exception as e:
-            db.session.rollback() 
-            
-            flash(f"Ocorreu um erro de banco de dados. Verifique o console. Detalhes: {e}", "danger")
-            return render_template('formTabela.html', form=form, tabelas=tabelas)
-            
-    else:
-
-        for field, errors in form.errors.items():
-             print(f"Erro de validação no campo '{field}': {errors}")
-
-    return render_template('formTabela.html', form=form, tabelas=tabelas)
-
-##################################################
-#### FUNÇÃO PARA CRIAR DADOS DA TABELA COLUNAS####
-##################################################
-
-import re
-
-def parse_create_table_sql(sql_query):
-
-    sql_query = re.sub(r'--.*', '', sql_query)
-    sql_query = re.sub(r'/\*.*?\*/', '', sql_query, flags=re.DOTALL)
-    
-    # Normaliza espaços
-    sql_query = re.sub(r'\s+', ' ', sql_query).strip()
-    
-    match = re.search(r'\((.*)\)', sql_query, re.IGNORECASE | re.DOTALL)
-    
-    if not match:
-        
-        return []
-
-    table_body = match.group(1).strip()
-
-    column_definitions = table_body.split(',')
-    
-    columns = []
-    
-    for definition in column_definitions:
-        
-        clean_def = definition.strip()
-        if not clean_def:
-            continue
-
-        
-        match_col = re.match(r'^\s*"?([a-zA-Z_][a-zA-Z0-9_]*)"?\s+(.+)$', clean_def, re.IGNORECASE | re.DOTALL)
-        
-        if match_col:
-            col_name = match_col.group(1)
-            type_and_constraints = match_col.group(2).strip()
-            
-            
-            columns.append({
-                'nome': col_name,
-                'tipo': type_and_constraints
-            })
-        else:
-            
-            if 'primary key' in clean_def.lower() or 'foreign key' in clean_def.lower() or 'constraint' in clean_def.lower():
-                continue
-
-            
-            print(f"Aviso: Não foi possível analisar a definição de coluna: {clean_def}")
-
-
-    return columns
-    
-##################################################
-#### FUNÇÃO PARA VISUALIZAR DADOS DA TABELA#######
-##################################################
-
-def get_tabelas_por_esquema(nome_esquema):
-
-    from sqlalchemy.orm import joinedload
-    
-    tabelas = Tabela.query.options(
-        joinedload(Tabela.dag),
-        joinedload(Tabela.origem)
-    ).filter_by(esquema=nome_esquema).all()
-    
-    return tabelas
 
 ################################################
 ######## FUNÇÃO PARA PUXAR ARQUIVO CSV##########

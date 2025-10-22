@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm
 from app import db, bcrypt,app
-from wtforms import FieldList, FormField, StringField, SubmitField, PasswordField, FileField, TextAreaField
+from wtforms import BooleanField, FieldList, FormField, StringField, SubmitField, PasswordField, FileField, TextAreaField
 from flask_wtf.file import FileField, FileAllowed
 from wtforms.validators import DataRequired, Email, Length, EqualTo, Optional, ValidationError
 
@@ -10,6 +10,7 @@ from app.models import User, Dag, Colunas, Origem, Tabela
 class LoginForm(FlaskForm):
     email = StringField('E-Mail', validators=[DataRequired(), Email()])
     senha = PasswordField('Senha', validators=[DataRequired()])
+    remember_me = BooleanField('Lembrar-me')
     btnSubmit = SubmitField('Login')
 
     def login(self):

@@ -16,7 +16,9 @@ __pycache__/
 *.sqlite
 *.db
 instance/
-
+__pycache__/
+node_modules/
+yarn.lock
 # Arquivos de Configuração Local/Secreta
 # Nunca commit credenciais ou chaves secretas!
 .env
